@@ -18,7 +18,7 @@ export abstract class AbstractLogger implements LoggerInterface {
     }
 
     protected formatMessage(message: string): string {
-        return `${this.getDate()} ${this.context}${message}`;
+        return `\n${this.getDate()} ${this.context}${message}`;
     }
 
     private getDate(): string {

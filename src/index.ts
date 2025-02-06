@@ -8,7 +8,7 @@ const logger = new LoggerConsole('Main::');
 export async function main() {
     try {
         const app = new App(appContainer.get<MenuController>(MenuController));
-        app.initialize();
+        await app.initialize();
 
         logger.log('Application started');
     } catch (error) {

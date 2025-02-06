@@ -8,7 +8,7 @@ export class App {
     ) {}
 
     @Log('initialize', 'initialized', (error) => `Failed to initialize: ${error}`)  
-    initialize() {
-        this.menuController.getMenu();
+    async initialize(): Promise<void> {
+        return await this.menuController.getMenu();
     }
 }
