@@ -5,3 +5,4 @@ dist/
 coverage/
 external.md
 Game.drawio
+tsconfig.tsbuildinfo

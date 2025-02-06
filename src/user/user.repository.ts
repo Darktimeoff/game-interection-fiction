@@ -11,7 +11,7 @@ export class UserRepository {
     ) {}
 
 
-    async create(user: UserCreateDtoInterface): Promise<UserEntityInterface> {
+    async create(user:UserCreateDtoInterface): Promise<UserEntityInterface> {
         const userEntity = new UserEntity({
             ...user,
             id: Date.now(),
