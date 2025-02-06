@@ -7,7 +7,11 @@ const logger = new LoggerConsole('Main::');
 
 export async function main() {
     try {
-        const app = new App(appContainer.get<MenuController>(MenuController));
+        const menuController = appContainer.get<MenuController>(MenuController);
+        if (!menuController) {
+            throw new Error('MenuController not found');
+        }
+        const app = new App(menuController);
         await app.initialize();
 
         logger.log('Application started');
