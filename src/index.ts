@@ -1,5 +1,5 @@
 import { App } from "@/app/app";
-import { LoggerConsole } from "@/generic/logger";
+import { LoggerConsole } from "@/generic/logging/logger.service";
 
 const logger = new LoggerConsole('Main::');
 

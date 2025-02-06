@@ -1,4 +1,4 @@
-import { LoggerConsole, LoggerInterface } from "@/generic/logger";
+import { LoggerConsole, LoggerInterface } from "@/generic/logging/logger.service";  
 import { DecoratedMethodResultType } from "@/generic/decorators/type/decorated-method-result.type";
 import { MethodDecoratorType } from "@/generic/decorators/type/method-decorator.type";
 
