@@ -1,9 +1,14 @@
 import { Log, LogClass } from "@/generic/logging/log.decorator";
+import { MenuController } from "@/menu/menu.controller";
 
 @LogClass()
 export class App {
-    constructor() {}
+    constructor(
+        private readonly menuController: MenuController
+    ) {}
 
     @Log('initialize', 'initialized', (error) => `Failed to initialize: ${error}`)  
-    initialize() {}
+    initialize() {
+        this.menuController.getMenu();
+    }
 }

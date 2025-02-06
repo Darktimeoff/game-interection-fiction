@@ -1,11 +1,13 @@
 import { App } from "@/app/app";
 import { LoggerConsole } from "@/generic/logging/logger.service";
+import appContainer from "@/app/app.container";
+import { MenuController } from "./menu/menu.controller";
 
 const logger = new LoggerConsole('Main::');
 
 export async function main() {
     try {
-        const app = new App();
+        const app = new App(appContainer.get<MenuController>(MenuController));
         app.initialize();
 
         logger.log('Application started');
