@@ -3,15 +3,33 @@
     "target": "ES2022",
     "module": "CommonJS",
     "lib": ["ES2022"],
-    "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
+    "composite": true,
+    "incremental": true,
+    "declaration": true,
+    "sourceMap": true,
+    "declarationMap": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": "./",
+    "rootDir": "./src",
+    "resolveJsonModule": true,
+    "paths": {
+        "@/*": [
+            "./src/*"
+        ]
+    }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  }
 } 

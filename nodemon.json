@@ -1,5 +1,6 @@
 {
-  "watch": ["src"],
+  "signal": "SIGINT",
+  "watch": ["src/**/*", ".env"],
   "ext": ".ts,.js",
   "ignore": [],
   "exec": "ts-node ./src/index.ts"
