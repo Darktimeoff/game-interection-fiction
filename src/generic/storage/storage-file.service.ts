@@ -23,7 +23,7 @@ export class StorageFileService<T extends object> implements StorageInterface<T>
         (res, query) => `Found many items ${JSON.stringify(query)}: ${JSON.stringify(res)}`,
         (err, query) => `Error finding many items ${JSON.stringify(query)}: ${err}`
     )
-    async findMany(query: Partial<T>): Promise<T[]> {
+    async findAll(query: Partial<T> = {}): Promise<T[]> {
         const file = await this.getData();
         return file.filter((item: T) => Object.keys(query).every(key => item[key as keyof T] === query[key as keyof T]));
     }

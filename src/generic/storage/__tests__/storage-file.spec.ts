@@ -17,16 +17,40 @@ describe('StorageFileService', () => {
         await fs.unlink('test.json');
     })
 
-    it('should find one item', async () => {
+    it('should not find one item', async () => {
         const item = await storage.findOne({ id: '1' });
         expect(item).toBeNull();
     })
 
-    it('should find many items', async () => {
-        const items = await storage.findMany({ id: '1' });
+    it('should not find all items', async () => {
+        const items = await storage.findAll({ id: '1' });
         expect(items).toEqual([]);
     })
 
+    it('should find all items', async () => {
+        const itemData1 = { id: '1', name: 'test' };
+        const itemData2 = { id: '2', name: 'test' };
+        await storage.create(itemData1);
+        await storage.create(itemData2);
+        const items = await storage.findAll({});
+        expect(items).toEqual([itemData1, itemData2]);
+    })
+
+    it('should find all items with a query', async () => {
+        const itemData1 = { id: '1', name: 'test' };
+        const itemData2 = { id: '2', name: 'test' };
+        await storage.create(itemData1);
+        await storage.create(itemData2);
+        const items = await storage.findAll({ id: '1' });
+        expect(items).toEqual([itemData1]);
+    })
+
+    it('should find one item', async () => {
+        const itemData = { id: '1', name: 'test' };
+        await storage.create(itemData);
+        const item = await storage.findOne({ id: '1' });
+        expect(item).toEqual(itemData);
+    })
 
     it('should create an item', async () => {
         const item = await storage.create({ id: '1', name: 'test' });

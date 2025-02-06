@@ -10,7 +10,7 @@ export function LogClass(logger: LoggerInterface = new LoggerConsole()) {
             return class extends constructor {
                 constructor(...args: any[]) {
                     super(...args);
-                    logger.log(`called with args: ${JSON.stringify(args)}`);
+                    logger.log(`initialized`);
                 }
             };
         } catch (error) {
