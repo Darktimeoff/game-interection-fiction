@@ -1,4 +1,4 @@
-import { Log, LogClass } from "../generic/decorators/log";
+import { Log, LogClass } from "@/generic/decorators/log";
 
 @LogClass()
 export class App {
