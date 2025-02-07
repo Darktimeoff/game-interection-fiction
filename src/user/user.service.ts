@@ -26,4 +26,13 @@ export class UserService {
     async getUsers(): Promise<UserEntityInterface[]> {
         return this.userRepository.findAll();
     }
+
+    @Log(
+        (name) => `Find user by name: ${name}`,
+        (user, name) => `Found user by name ${name}: ${JSON.stringify(user)}`,
+        (error, name) => `Error finding user by name ${name}: ${error}`
+    )
+    async findByName(name: string): Promise<UserEntityInterface | null> {
+        return this.userRepository.findByName(name)
+    }
 }

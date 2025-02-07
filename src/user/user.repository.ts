@@ -24,4 +24,12 @@ export class UserRepository {
     async findAll(): Promise<UserEntityInterface[]> {
         return this.storage.findAll();
     }
+
+    async findById(id: number): Promise<UserEntityInterface | null> {
+        return this.storage.findOne({ id });
+    }
+
+    async findByName(name: string): Promise<UserEntityInterface | null> {
+        return this.storage.findOne({ name });
+    }
 }

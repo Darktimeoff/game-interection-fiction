@@ -1,15 +1,18 @@
 import { Log, LogClass } from "@/generic/logging/log.decorator";
-import { UserService } from "@/user/user.service";
 import { MenuItemInterface } from "./interface/menu-item.interface";
 import readline from 'node:readline';
 import { LoggerConsole, LoggerInterface } from "@/generic/logging/logger.service";
+import { MenuActionsService } from "./menu-actions.service";
+import { ValidationError } from "@/generic/errors/validation.error";
+
 @LogClass()
 export class MenuService {
     private readonly rl: readline.Interface
 
     constructor(
-        public readonly userService: UserService,
-        private readonly logger: LoggerInterface = new LoggerConsole('MenuService:: ')
+        private readonly menuActionsService: MenuActionsService,
+        private readonly logger: LoggerInterface = new LoggerConsole('MenuService:: '),
+
     ) {
         this.rl = readline.createInterface({
             input: process.stdin,
@@ -20,28 +23,61 @@ export class MenuService {
     @Log('getMenu', 'menu', (error) => `Failed to get menu: ${error}`)
     async getMenu(): Promise<void> {
         try {
-            this.rl.resume()
-
             console.clear()
             this.getMenuItems().forEach(this.prepareMenuItem)
 
             const userInput = await this.getUserInput('Выберите пункт меню:')
-            this.validateUserInput(userInput)
-            
+            this.validateUserInput(userInput, this.getMenuItems())
+
             this.logger.log(`User input: ${userInput}`)
-            this.rl.pause()
+
+            const menuItem = this.getMenuItems().find(item => item.id === Number(userInput))
+            if(menuItem?.action) {
+                await menuItem.action()
+            } else {
+                throw new Error('Not implemented')
+            }
         } catch (error) {
-            this.getMenu()
-            this.logger.error(`Failed to get menu: ${error}`)
+            if(error instanceof ValidationError) {
+                console.log(error.message)
+                await this.getMenu()
+            }
+
+            throw error
+        }
+    }
+
+    private async getMenuCreateUser(): Promise<void> {
+        try {
+            const userName = await this.getUserInput('Введите имя персонажа:')
+
+            await this.menuActionsService.createUser(userName)
+
+            console.log(`Персонаж ${userName} успешно создан`)
+        } catch (error) {
+            if(error instanceof ValidationError) {
+                console.log(error.message)
+                await this.getMenuCreateUser()
+            }
+
+            throw error
         }
     }
 
     private async getUserInput(question: string): Promise<string> {
-        return new Promise((resolve) => {
-            this.rl.question(question, (answer) => {
-                resolve(answer)
+        this.rl.resume()
+
+        try {
+            return await new Promise((resolve) => {
+                this.rl.question(question, (answer) => {
+                    resolve(answer)
+                })
             })
-        })
+        } catch (error) {
+            throw new Error('Failed to get user input')
+        } finally {
+            this.rl.pause()
+        }
     }
 
     private prepareMenuItem(item: MenuItemInterface): void {
@@ -57,6 +93,7 @@ export class MenuService {
             {
                 "id": 2,
                 "title": "Создать новго персонажа",
+                "action": async () => await this.getMenuCreateUser()
             }, 
             {
                 "id": 3,
@@ -69,14 +106,13 @@ export class MenuService {
         ]
     }
 
-    private validateUserInput(input: string): void {
+    private validateUserInput(input: string, items: MenuItemInterface[]): void {
         if(Number.isNaN(Number(input))) {
-            throw new Error('Invalid input should be a number')
+            throw new ValidationError('Invalid input should be a number')
         }
 
-        const menuItems = this.getMenuItems()
-        if(!menuItems.find(item => item.id === Number(input))) {
-            throw new Error('Invalid menu item selected')
+        if(!items.find(item => item.id === Number(input))) {
+            throw new ValidationError('Invalid menu item selected')
         }
     }
 }   

@@ -6,3 +6,4 @@ coverage/
 external.md
 Game.drawio
 tsconfig.tsbuildinfo
+data/storage/
