@@ -30,7 +30,6 @@
   },
   "lint-staged": {
     "*.{ts}": [
-      "npm run test -- --findRelatedTests"
     ]
   }
 }

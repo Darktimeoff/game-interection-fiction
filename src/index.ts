@@ -1,18 +1,13 @@
-import { App } from "@/app/app";
 import { LoggerConsole } from "@/generic/logging/logger.service";
-import appContainer from "@/app/app.container";
-import { MenuController } from "./menu/menu.controller";
+import gameContainer from "./client/game/game.container";
+
 
 const logger = new LoggerConsole('Main::');
 
 export async function main() {
     try {
-        const menuController = appContainer.get<MenuController>(MenuController);
-        if (!menuController) {
-            throw new Error('MenuController not found');
-        }
-        const app = new App(menuController);
-        await app.initialize();
+        const gameController = gameContainer.gameController;
+        await gameController.startGame();
 
         logger.log('Application started');
     } catch (error) {
