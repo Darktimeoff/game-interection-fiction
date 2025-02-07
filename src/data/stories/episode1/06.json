@@ -1,0 +1,170 @@
+{
+    "id": "06",
+    "title": "Побег с Абидоса",
+    "description": "Корабли Апофиса начинают бомбардировку храма. Команде необходимо добраться до Звёздных врат.",
+    "scenes": [
+        {
+            "id": "initial_retreat",
+            "description": "Команда спешно отступает по коридорам храма. Сверху доносятся звуки взрывов.",
+            "dialogs": [
+                {
+                    "character": "О'Нил",
+                    "text": "Картер, набирайте Землю! Скаара, прикрывай отход!",
+                    "choices": [
+                        {
+                            "text": "Организовать оборону",
+                            "nextScene": "defend_position"
+                        },
+                        {
+                            "text": "Бежать к вратам",
+                            "nextScene": "rush_to_gate"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "defend_position",
+            "description": "Джаффа врываются в коридор. Завязывается перестрелка.",
+            "dialogs": [
+                {
+                    "character": "Скаара",
+                    "text": "Их слишком много!",
+                    "choices": [
+                        {
+                            "text": "Использовать гранаты",
+                            "nextScene": "grenade_defense"
+                        },
+                        {
+                            "text": "Отступать с боем",
+                            "nextScene": "fighting_retreat"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "rush_to_gate",
+            "description": "Команда бежит к вратам, преследуемая джаффа.",
+            "dialogs": [
+                {
+                    "character": "Картер",
+                    "text": "Врата активированы! Код отправлен!",
+                    "choices": [
+                        {
+                            "text": "Прикрыть отход гражданских",
+                            "nextScene": "cover_civilians"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "grenade_defense",
+            "description": "Взрывы гранат обрушивают часть потолка, временно блокируя путь преследователям.",
+            "dialogs": [
+                {
+                    "character": "О'Нил",
+                    "text": "Это их ненадолго задержит. Бегом к вратам!",
+                    "choices": [
+                        {
+                            "text": "Продолжить отступление",
+                            "nextScene": "gate_room"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "fighting_retreat",
+            "description": "Команда отстреливается, медленно отступая к вратам.",
+            "dialogs": [
+                {
+                    "character": "Дэниел",
+                    "condition": "daniel_alive",
+                    "text": "Джек! Апофис лично ведёт атаку!"
+                },
+                {
+                    "character": "О'Нил",
+                    "text": "Отходим к вратам! Живее!",
+                    "choices": [
+                        {
+                            "text": "Прорываться к вратам",
+                            "nextScene": "gate_room"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "cover_civilians",
+            "description": "Абидосцы бегут к вратам, пока команда ведёт огонь по преследователям.",
+            "dialogs": [
+                {
+                    "character": "Скаара",
+                    "text": "Они захватили Шау'ри!",
+                    "condition": "daniel_alive",
+                    "choices": [
+                        {
+                            "text": "Попытаться спасти Шау'ри",
+                            "nextScene": "rescue_attempt"
+                        },
+                        {
+                            "text": "Продолжить эвакуацию",
+                            "nextScene": "continue_evacuation"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "rescue_attempt",
+            "description": "Дэниел бросается к захваченной Шау'ри, но путь преграждают джаффа.",
+            "condition": "daniel_alive",
+            "dialogs": [
+                {
+                    "character": "О'Нил",
+                    "text": "Дэниел, нет! Мы вернёмся за ней!",
+                    "choices": [
+                        {
+                            "text": "Силой оттащить Дэниела к вратам",
+                            "nextScene": "final_escape"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "continue_evacuation",
+            "description": "Команда продолжает прикрывать отход последних беженцев.",
+            "dialogs": [
+                {
+                    "character": "О'Нил",
+                    "text": "Последняя группа! Уходим!",
+                    "choices": [
+                        {
+                            "text": "Отступить через врата",
+                            "nextScene": "final_escape"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "final_escape",
+            "description": "В последний момент появляется Апофис со своей гвардией.",
+            "dialogs": [
+                {
+                    "character": "Апофис",
+                    "text": "Джаффа, кри!",
+                    "choices": [
+                        {
+                            "text": "Прыгнуть в врата",
+                            "nextScene": "07"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
