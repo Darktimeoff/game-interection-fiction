@@ -1,11 +1,11 @@
 import userContainer from "@/user/user.container";
-import { MenuService } from "./menu.service";
-import { MenuActionsService } from "./menu-actions.service";
+import { MenuService } from "@/client/menu/menu.service";
 import { StateStore } from "@/client/state/state.store";
+import { StateUserService } from "@/client/state/state-user.service";
 
 const stateStore = new StateStore()
-const menuActionsService = new MenuActionsService(stateStore, userContainer.userService);
-const menuService = new MenuService(menuActionsService);  
+const stateUserService = new StateUserService(stateStore, userContainer.userService);
+const menuService = new MenuService(stateUserService);  
 
 export default {
     menuService,

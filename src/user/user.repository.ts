@@ -32,4 +32,12 @@ export class UserRepository {
     async findByName(name: string): Promise<UserEntityInterface | null> {
         return this.storage.findOne({ name });
     }
+
+    async deleteById(id: number): Promise<boolean> {
+        return this.storage.delete({ id });
+    }
+
+    async deleteByName(name: string): Promise<boolean> {
+        return this.storage.delete({ name });
+    }
 }

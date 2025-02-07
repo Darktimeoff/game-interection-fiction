@@ -35,4 +35,31 @@ export class UserService {
     async findByName(name: string): Promise<UserEntityInterface | null> {
         return this.userRepository.findByName(name)
     }
+
+    @Log(
+        (id) => `Find user by id: ${id}`,
+        (user, id) => `Found user by id ${id}: ${JSON.stringify(user)}`,
+        (error, id) => `Error finding user by id ${id}: ${error}`
+    )
+    async findById(id: number): Promise<UserEntityInterface | null> {
+        return this.userRepository.findById(id)
+    }
+
+    @Log(
+        (id) => `Deleting user by id: ${id}`,
+        (user, id) => `User deleted by id ${id}: ${JSON.stringify(user)}`,
+        (error, id) => `Error deleting user by id ${id}: ${error}`
+    )
+    async deleteById(id: number): Promise<boolean> {
+        return this.userRepository.deleteById(id)
+    }
+
+    @Log(
+        (name) => `Deleting user by name: ${name}`,
+        (user, name) => `User deleted by name ${name}: ${JSON.stringify(user)}`,
+        (error, name) => `Error deleting user by name ${name}: ${error}`
+    )
+    async deleteByName(name: string): Promise<boolean> {
+        return this.userRepository.deleteByName(name)
+    }
 }

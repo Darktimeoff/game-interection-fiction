@@ -2,7 +2,7 @@ import { Log, LogClass } from "@/generic/logging/log.decorator";
 import { MenuItemInterface } from "./interface/menu-item.interface";
 import readline from 'node:readline';
 import { LoggerConsole, LoggerInterface } from "@/generic/logging/logger.service";
-import { MenuActionsService } from "./menu-actions.service";
+import { StateUserService } from "@/client/state/state-user.service";
 import { ValidationError } from "@/generic/errors/validation.error";
 
 @LogClass()
@@ -10,7 +10,7 @@ export class MenuService {
     private readonly rl: readline.Interface
 
     constructor(
-        private readonly menuActionsService: MenuActionsService,
+        private readonly menuActionsService: StateUserService,
         private readonly logger: LoggerInterface = new LoggerConsole('MenuService:: '),
 
     ) {
@@ -44,6 +44,51 @@ export class MenuService {
             }
 
             throw error
+        }
+    }
+
+    private async getMenuSelectUser(): Promise<void> {
+        try {
+            const {title} = await this.getMenuUsers()
+            await this.menuActionsService.selectUserByName(title)
+            console.log(`Выбран пользователь: ${title}`)
+        } catch (error) {
+            if(error instanceof ValidationError) {
+                console.log(error.message)
+                await this.getMenu()
+            }
+        }
+    }
+
+    private async getMenuUsers(): Promise<MenuItemInterface> {
+        const users = await this.menuActionsService.getUsers()
+        if(users.length === 0) {
+            throw new ValidationError('Нет пользователей')
+        }
+
+        const menuItems = users.map((user, index) => ({
+            id: index + 1,
+            title: user.name,
+        }))
+
+        menuItems.forEach(this.prepareMenuItem)
+
+        const userInput = await this.getUserInput('Выберите пользователя: ')
+        this.validateUserInput(userInput, menuItems)
+
+        return menuItems.find(item => item.id === Number(userInput))!
+    }
+
+    private async getMenuDeleteUser(): Promise<void> {
+        try {
+            const {title} = await this.getMenuUsers()
+            await this.menuActionsService.deleteUserByName(title)
+            console.log(`Персонаж ${title} успешно удален`)
+        } catch (error) {
+            if(error instanceof ValidationError) {
+                console.log(error.message)
+                await this.getMenu()
+            }
         }
     }
 
@@ -89,6 +134,7 @@ export class MenuService {
             {
                 "id": 1,
                 "title": "Играть за персонажа",
+                "action": async () => await this.getMenuSelectUser()
             },
             {
                 "id": 2,
@@ -98,10 +144,12 @@ export class MenuService {
             {
                 "id": 3,
                 "title": "Удалить персонажа",
+                "action": async () => await this.getMenuDeleteUser()
             },
             {
                 "id": 4,
                 "title": "Выйти",
+                "action": async () => process.exit(1)
             }
         ]
     }
