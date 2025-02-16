@@ -1,7 +1,7 @@
 
 import { readdir } from "node:fs/promises";
 import { StoryDataloaderInterface } from "./interfaces/story-dataloder.interface";
-import { StoryInterface } from "./interfaces/story.interface";
+import { StoryFullInterface } from "./interfaces/story.interface";
 import { StoryEnum } from "./enum/story.enum";
 
 export class StoryFileAccess implements StoryDataloaderInterface {
@@ -11,7 +11,7 @@ export class StoryFileAccess implements StoryDataloaderInterface {
         return this.storyDataloader.path;
     }
 
-    async load(storyId: StoryEnum = StoryEnum.episode1, episodeId: string = ''): Promise<StoryInterface> {
+    async load(storyId: StoryEnum = StoryEnum.episode1, episodeId: string = ''): Promise<StoryFullInterface> {
         await this.validateEpisodeId(storyId);
         await this.validateSceneId(storyId, episodeId);
 
