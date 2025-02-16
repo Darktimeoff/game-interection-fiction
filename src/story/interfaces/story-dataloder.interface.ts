@@ -1,7 +1,8 @@
-import { StoryInterface } from "./story.interface";
+import { StoryEnum } from "@/story/enum/story.enum";
+import { StoryInterface } from "@/story/interfaces/story.interface";
 
 export interface StoryDataloaderInterface {
     path: string;
 
-    load(episodeId: string, sceneId: string): Promise<StoryInterface>;
+    load(storyId: StoryEnum, episodeId: string): Promise<StoryInterface>;
 }   
