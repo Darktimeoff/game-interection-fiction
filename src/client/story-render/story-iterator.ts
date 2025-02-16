@@ -14,12 +14,21 @@ export class StoryIterator implements StoryIteratorInterface {
     private sceneId: string | null = null
     private dialogId: string | null = null
     private conditionMap!: Record<ConditionType, boolean>
+    private isEnd: boolean = false
 
     constructor(story?: StoryInterface, id: string | null = null) {
         this.reset()
         if(story) {
             this.set(story, id)
         }
+    }
+
+    getCondition(condition: ConditionType): boolean {
+        return this.conditionMap[condition]
+    }
+
+    setCondition(condition: ConditionType, value: boolean): void {
+        this.conditionMap[condition] = value
     }
 
     reset(): void {
@@ -30,12 +39,14 @@ export class StoryIterator implements StoryIteratorInterface {
             acc[type] = true
             return acc
         }, {} as Record<ConditionType, boolean>)
+        this.isEnd = false
     }
 
     set(item: StoryInterface, id: string | null = null): void {
         this.story = item
         this.sceneId = id
         this.dialogId = null
+        this.isEnd = false
     }
 
     selectChoice(choiceIndex: number): void {
@@ -63,17 +74,24 @@ export class StoryIterator implements StoryIteratorInterface {
         }
 
         if(choice.setCondition) {
-            this.conditionMap = choice.setCondition
+            Object.entries(choice.setCondition).forEach(([key, value]) => {
+                this.setCondition(key as ConditionType, value)
+            })
         }
 
         this.sceneId = this.story?.scenes.filter(this.filterByCondition.bind(this))?.find(scene => scene.id === choice.nextScene)?.id ?? null
         this.dialogId = null
+        this.isEnd = !this.sceneId
     }
 
     next(): StoryItemInterface | null {
         const filterByCondition = this.filterByCondition.bind(this)
         if(!this.story) {
             throw new Error('Story is not initialized')
+        }
+
+        if(this.isEnd) {
+            return null
         }
         
         if(!this.sceneId) {
