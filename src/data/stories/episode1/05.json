@@ -149,11 +149,13 @@
                     "choices": [
                         {
                             "text": "Попытаться спасти Дэниела",
-                            "nextScene": "both_die"
+                            "nextScene": "both_die",
+                            "setCondition": {"daniel_alive": false, "has_map": false}
                         },
                         {
                             "text": "Забрать карту и отступить",
-                            "nextScene": "retreat_without_daniel"
+                            "nextScene": "retreat_without_daniel",
+                            "setCondition": {"daniel_alive": false, "has_map": true}
                         }
                     ]
                 }
@@ -221,7 +223,8 @@
                     "choices": [
                         {
                             "text": "Отступить к вратам",
-                            "nextScene": "06"
+                            "nextScene": "06",
+                            "setCondition": {"daniel_alive": true, "has_map": true}
                         }
                     ]
                 }
@@ -237,7 +240,8 @@
                     "choices": [
                         {
                             "text": "Бежать к вратам",
-                            "nextScene": "06"
+                            "nextScene": "06",
+                            "setCondition": {"daniel_alive": true, "has_map": true}
                         }
                     ]
                 }
