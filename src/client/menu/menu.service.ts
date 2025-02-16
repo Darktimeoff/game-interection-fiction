@@ -21,7 +21,7 @@ export class MenuService {
     }
 
     @Log('getMenu', 'menu', (error) => `Failed to get menu: ${error}`)
-    async getMenu(): Promise<void | MenuActionEnum.START_GAME> {
+    async getMenu(): Promise<void | MenuActionEnum> {
         try {
             console.clear()
             this.getMenuItems().forEach(this.prepareMenuItem)
@@ -37,10 +37,8 @@ export class MenuService {
             }
 
             await menuItem.action()
-            //TODO: Rework on event 
-            if(menuItem.id === MenuActionEnum.START_GAME) {
-                return MenuActionEnum.START_GAME
-            }
+           
+            return menuItem.id
         } catch (error) {
             if(error instanceof ValidationError) {
                 console.log(error.message)

@@ -37,7 +37,7 @@ export class StoryUserService {
             userId,
             storyId: story.storyId,
             episodeId: story.id,
-            sceneId: story.scenes[0].id,
+            sceneId: null,
         });
 
         return {

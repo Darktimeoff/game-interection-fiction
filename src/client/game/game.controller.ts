@@ -1,5 +1,5 @@
 
-import { GameService } from "./game.service";
+import { GameService } from "./service/game.service";
 
 
 export class GameController {
