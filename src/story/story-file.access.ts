@@ -1,5 +1,4 @@
 
-import { readdir } from "node:fs/promises";
 import { StoryDataloaderInterface } from "./interfaces/story-dataloder.interface";
 import { StoryFullInterface } from "./interfaces/story.interface";
 import { StoryEnum } from "./enum/story.enum";
@@ -11,33 +10,41 @@ export class StoryFileAccess implements StoryDataloaderInterface {
         return this.storyDataloader.path;
     }
 
-    async load(storyId: StoryEnum = StoryEnum.episode1, episodeId: string = ''): Promise<StoryFullInterface> {
-        await this.validateEpisodeId(storyId);
-        await this.validateSceneId(storyId, episodeId);
+    async load(storyId: StoryEnum = StoryEnum.episode1, sceneId: string = ''): Promise<StoryFullInterface> {
+        await this.validateStoryId(storyId);
+        await this.validateSceneId(storyId, sceneId);
 
-        return await this.storyDataloader.load(storyId, episodeId);
+        return await this.storyDataloader.load(storyId, sceneId);
     }
 
-    private async validateEpisodeId(storyId: StoryEnum) {
-        const episodes = await readdir(this.storyDataloader.path);
-        if(episodes.length === 0) {
-            throw new Error('No episodes found');
+    async getStoryIds(): Promise<StoryEnum[]> {
+        return await this.storyDataloader.getStoryIds();
+    }
+
+    async getSceneIds(storyId: StoryEnum): Promise<string[]> {
+        return await this.storyDataloader.getSceneIds(storyId);       
+    }
+
+    private async validateStoryId(storyId: StoryEnum) {
+        const stories = await this.storyDataloader.getStoryIds();
+        if(stories.length === 0) {
+            throw new Error('No stories found');
         };
 
-        if(!episodes.includes(storyId)) {
+        if(!stories.includes(storyId)) {
             throw new Error(`Story id ${storyId} not found`);
         };
     }
 
-    private async validateSceneId(storyId: StoryEnum, episodeId: string) {
-        const episodeIds = (await readdir(`${this.storyDataloader.path}/${storyId}`)).map(sceneId => sceneId.replace('.json', ''));
-        if(episodeIds.length === 0) {
-            throw new Error(`No episodes found in story ${storyId}`);
+    private async validateSceneId(storyId: StoryEnum, sceneId: string) {
+        const sceneIds = await this.storyDataloader.getSceneIds(storyId);
+        if(sceneIds.length === 0) {
+            throw new Error(`No scenes found in story ${storyId}`);
         };
 
 
-        if(!episodeIds.includes(episodeId)) {
-            throw new Error(`Episode id ${episodeId} not found in story ${storyId}`);
+        if(!sceneIds.includes(sceneId)) {
+            throw new Error(`Scene id ${sceneId} not found in story ${storyId}`);
         };
     }
 }

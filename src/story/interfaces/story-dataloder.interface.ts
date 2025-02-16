@@ -4,5 +4,9 @@ import { StoryFullInterface } from "@/story/interfaces/story.interface";
 export interface StoryDataloaderInterface {
     path: string;
 
-    load(storyId?: StoryEnum, episodeId?: string): Promise<StoryFullInterface>;
+    load(storyId?: StoryEnum, sceneId?: string): Promise<StoryFullInterface>;
+
+    getStoryIds(): Promise<StoryEnum[]>;
+
+    getSceneIds(storyId: StoryEnum): Promise<string[]>;
 }   
