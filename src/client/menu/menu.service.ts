@@ -1,9 +1,10 @@
 import { Log, LogClass } from "@/generic/logging/log.decorator";
-import { MenuItemInterface } from "./interface/menu-item.interface";
+import { MenuItemActionInterface, MenuItemInterface } from "./interface/menu-item.interface";
 import readline from 'node:readline';
 import { LoggerConsole, LoggerInterface } from "@/generic/logging/logger.service";
 import { StateUserService } from "@/client/state/state-user.service";
 import { ValidationError } from "@/generic/errors/validation.error";
+import { MenuActionEnum } from "./enum/menu-action.enum";
 
 @LogClass()
 export class MenuService {
@@ -12,7 +13,6 @@ export class MenuService {
     constructor(
         private readonly menuActionsService: StateUserService,
         private readonly logger: LoggerInterface = new LoggerConsole('MenuService:: '),
-
     ) {
         this.rl = readline.createInterface({
             input: process.stdin,
@@ -21,7 +21,7 @@ export class MenuService {
     }
 
     @Log('getMenu', 'menu', (error) => `Failed to get menu: ${error}`)
-    async getMenu(): Promise<void> {
+    async getMenu(): Promise<void | MenuActionEnum.START_GAME> {
         try {
             console.clear()
             this.getMenuItems().forEach(this.prepareMenuItem)
@@ -32,10 +32,14 @@ export class MenuService {
             this.logger.log(`User input: ${userInput}`)
 
             const menuItem = this.getMenuItems().find(item => item.id === Number(userInput))
-            if(menuItem?.action) {
-                await menuItem.action()
-            } else {
+            if(!menuItem?.action) {
                 throw new Error('Not implemented')
+            }
+
+            await menuItem.action()
+            //TODO: Rework on event 
+            if(menuItem.id === MenuActionEnum.START_GAME) {
+                return MenuActionEnum.START_GAME
             }
         } catch (error) {
             if(error instanceof ValidationError) {
@@ -129,25 +133,25 @@ export class MenuService {
         console.log(`${item.id}. ${item.title}`)
     }
 
-    private getMenuItems(): MenuItemInterface[] {
+    private getMenuItems(): MenuItemActionInterface[] {
         return [
             {
-                "id": 1,
+                "id": MenuActionEnum.START_GAME,
                 "title": "Играть за персонажа",
                 "action": async () => await this.getMenuSelectUser()
             },
             {
-                "id": 2,
+                "id": MenuActionEnum.CREATE_USER,
                 "title": "Создать новго персонажа",
                 "action": async () => await this.getMenuCreateUser()
             }, 
             {
-                "id": 3,
+                "id": MenuActionEnum.DELETE_USER,
                 "title": "Удалить персонажа",
                 "action": async () => await this.getMenuDeleteUser()
             },
             {
-                "id": 4,
+                "id": MenuActionEnum.EXIT,
                 "title": "Выйти",
                 "action": async () => process.exit(1)
             }

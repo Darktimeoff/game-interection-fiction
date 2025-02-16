@@ -1,8 +1,10 @@
 import { UserEntityInterface } from "@/user/entity/user-entity.interface";
 import { StateInterface } from "./state.interface";
 import { Log, LogClass } from "@/generic/logging/log.decorator";
+import { Singleton } from "@/generic/decorators/singleton.decorator";
 
 @LogClass()
+@Singleton
 export class StateStore implements StateInterface {
     private _user: UserEntityInterface | null = null;
 

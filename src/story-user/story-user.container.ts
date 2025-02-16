@@ -9,6 +9,4 @@ const pathToFile = join(__dirname, '..', 'data', 'storage', 'story-users.json');
 const repository = new StoryUserRepository(new StorageFileService<StoryUserEntityInterface>(pathToFile));
 const storyUserService = new StoryUserService(repository, storyDataloader);
 
-export default {
-    storyUserService,
-}
+export default storyUserService

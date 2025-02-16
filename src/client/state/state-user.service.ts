@@ -12,6 +12,15 @@ export class StateUserService {
     ) {}
 
     @Log(
+        () => `Getting current user`,
+        (user) => `User got ${user?.id}`,
+        (error) => `Failed to get current user: ${error}`
+    )
+    getCurrentUser(): UserEntityInterface | null {
+        return this.stateStore.user
+    }
+
+    @Log(
         (name) => `Creating user with name: ${name}`, 
         (user, name) => `User created with name ${name}: ${JSON.stringify(user)}`,
         (error, name) => `Failed to create user with name ${name}: ${error}`

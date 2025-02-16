@@ -3,6 +3,7 @@ import { StoryUserEntityInterface } from "./entity/story-user-entity.interface";
 import { StoryUserFullEntityInterface } from "./entity/story-user-full-entity.interface";
 import { StoryUserRepository } from "./story-user.repository";
 import { StoryDataloaderInterface } from "@/story/interfaces/story-dataloder.interface";
+import { StoryEnum } from "@/story/enum/story.enum";
 
 export class StoryUserService {
     constructor(
@@ -30,7 +31,7 @@ export class StoryUserService {
     }
 
     private async create(userId: StoryUserEntityInterface['userId']): Promise<StoryUserFullEntityInterface> {
-        const story = await this.stories.load();
+        const story = await this.stories.load(StoryEnum.episode1, '01');
 
         const storyUser = await this.repository.create({
             userId,

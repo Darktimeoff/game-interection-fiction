@@ -1,6 +1,11 @@
+import { MenuActionEnum } from "@/client/menu/enum/menu-action.enum";
 
 export interface MenuItemInterface {
     id: number;
     title: string;
-    action?: () => Promise<void>;
+}
+
+export interface MenuItemActionInterface extends MenuItemInterface {
+    id: MenuActionEnum;
+    action: () => Promise<void>;
 }
