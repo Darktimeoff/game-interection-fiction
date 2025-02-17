@@ -9,6 +9,7 @@ import { UserRepository } from "@/user/user.repository";
 import { UserEntityInterface } from "@/user/entity/user-entity.interface";
 import { join } from "node:path";
 import { StoryEnum } from "@/story/enum/story.enum";
+import { StoryService } from "@/story/story.service";
 
 const pathToFile = join(__dirname, 'story-users.json');
 const pathToUsersFile = join(__dirname, 'users.json');
@@ -23,7 +24,9 @@ describe('StoryUserService', () => {
 
         storyUserService = new StoryUserService(new StoryUserRepository(
             new StorageFileService<StoryUserEntityInterface>(pathToFile)
-        ), new StoryFileDataloader());
+        ), new StoryService(
+            new StoryFileDataloader()
+        ));
 
         await writeFile(pathToUsersFile, JSON.stringify([]));
 

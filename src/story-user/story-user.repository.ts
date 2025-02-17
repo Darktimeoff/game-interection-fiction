@@ -6,7 +6,7 @@ import { StoryUserEntity } from "./entity/story-user.entity";
 
 export class StoryUserRepository {
     constructor(
-        private readonly storyUserFileAccess: StorageFileService<StoryUserEntityInterface>,
+        private readonly storage: StorageFileService<StoryUserEntityInterface>,
     ) {}
 
     async create(storyUser: StoryUserCreateInterface) {
@@ -15,12 +15,21 @@ export class StoryUserRepository {
             ...storyUser,
         });
 
-        return await this.storyUserFileAccess.create(storyUserEntity);
+        return await this.storage.create(storyUserEntity);
     }
 
     async findByUserId(userId: StoryUserEntityInterface['userId']) {
-        return await this.storyUserFileAccess.findOne({
+        return await this.storage.findOne({
             userId,
         });
+    }
+
+    async updateById(id: StoryUserEntityInterface['id'], storyUser: StoryUserEntityInterface) {
+        return await this.storage.update(
+            {
+                id,
+            },
+            storyUser,
+        ) 
     }
 }

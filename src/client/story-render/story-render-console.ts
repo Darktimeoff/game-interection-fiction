@@ -1,18 +1,15 @@
 import { ChoiceInterface } from "@/story/interfaces/choices.interface"
 import { StoryItemInterface } from "./interface/story-item.interface"
 import { StoryRenderInterface } from "./story-render.interface"
-import { createInterface, Interface } from "node:readline/promises"
+import { ReadlineService } from "@/generic/readline/readline.service"
 
 
 export class StoryRenderConsole implements StoryRenderInterface {
-    private rl: Interface
-
-    constructor() {
-        this.rl = createInterface({
-            input: process.stdin,
-            output: process.stdout
-        })
+    constructor(
+        private readonly rl: ReadlineService = new ReadlineService()
+    ) {
     }
+
 
     async render(item: StoryItemInterface): Promise<number | null> {
         console.clear()
@@ -28,9 +25,9 @@ export class StoryRenderConsole implements StoryRenderInterface {
             item.choices.forEach(this.renderChoice)
             return Number(await this.rl.question('\nответ: ')) - 1
         }
-
+ 
         await this.rl.question('\nНажмите Enter для продолжения...')
-
+   
         return null
     }
 

@@ -17,6 +17,6 @@ export class GameService {
             return
         }
 
-        await this.gameStoryService.getStory()
+        return await this.gameStoryService.initializeStory()
     }
 }

@@ -2,13 +2,13 @@ import { Log } from "@/generic/logging/log.decorator";
 import { StoryUserEntityInterface } from "./entity/story-user-entity.interface";
 import { StoryUserFullEntityInterface } from "./entity/story-user-full-entity.interface";
 import { StoryUserRepository } from "./story-user.repository";
-import { StoryDataloaderInterface } from "@/story/interfaces/story-dataloder.interface";
 import { StoryEnum } from "@/story/enum/story.enum";
+import { StoryService } from "@/story/story.service";
 
 export class StoryUserService {
     constructor(
         private readonly repository: StoryUserRepository,
-        private readonly stories: StoryDataloaderInterface,
+        private readonly stories: StoryService,
     ) {}
 
     @Log(
@@ -28,6 +28,20 @@ export class StoryUserService {
             ...storyUser,
             story,
         };
+    }
+
+    @Log(
+        (storyUser) => `Updating story user ${JSON.stringify(storyUser)}`,
+        (newStoryUser, storyUser) => `Updated story user ${JSON.stringify(storyUser)}: ${JSON.stringify(newStoryUser)}`,
+        (err, storyUser) => `Error updating story user ${JSON.stringify(storyUser)}: ${err}`
+    )
+    async updateStoryUser(storyUser: StoryUserEntityInterface): Promise<StoryUserEntityInterface> {
+        const storyUserEntity = await this.repository.updateById(storyUser.id, storyUser)
+        if(!storyUserEntity) {
+           throw new Error('Story user not found')
+        }
+
+        return storyUserEntity
     }
 
     private async create(userId: StoryUserEntityInterface['userId']): Promise<StoryUserFullEntityInterface> {

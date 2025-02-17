@@ -12,7 +12,7 @@
                     "choices": [
                         {
                             "text": "Начать заново",
-                            "nextScene": "episode1_01"
+                            "nextScene": "episode1"
                         },
                         {
                             "text": "Выйти из игры",

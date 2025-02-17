@@ -169,7 +169,7 @@
                     "choices": [
                         {
                             "text": "Продолжить во второй серии",
-                            "nextScene": "episode2_01"
+                            "nextScene": "episode2"
                         }
                     ]
                 }

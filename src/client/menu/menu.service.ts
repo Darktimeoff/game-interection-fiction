@@ -1,23 +1,18 @@
 import { Log, LogClass } from "@/generic/logging/log.decorator";
 import { MenuItemActionInterface, MenuItemInterface } from "./interface/menu-item.interface";
-import readline from 'node:readline';
 import { LoggerConsole, LoggerInterface } from "@/generic/logging/logger.service";
 import { StateUserService } from "@/client/state/state-user.service";
 import { ValidationError } from "@/generic/errors/validation.error";
 import { MenuActionEnum } from "./enum/menu-action.enum";
+import { ReadlineService } from "@/generic/readline/readline.service";
 
 @LogClass()
 export class MenuService {
-    private readonly rl: readline.Interface
-
     constructor(
         private readonly menuActionsService: StateUserService,
         private readonly logger: LoggerInterface = new LoggerConsole('MenuService:: '),
+        private readonly rl: ReadlineService = new ReadlineService()
     ) {
-        this.rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout
-        })
     }
 
     @Log('getMenu', 'menu', (error) => `Failed to get menu: ${error}`)
@@ -115,11 +110,7 @@ export class MenuService {
         this.rl.resume()
 
         try {
-            return await new Promise((resolve) => {
-                this.rl.question(question, (answer) => {
-                    resolve(answer)
-                })
-            })
+            return await this.rl.question(question)
         } catch (error) {
             throw new Error('Failed to get user input')
         } finally {
