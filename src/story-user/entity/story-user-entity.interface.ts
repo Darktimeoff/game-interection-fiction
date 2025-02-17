@@ -9,4 +9,5 @@ export interface StoryUserEntityInterface {
     storyId: StoryEnum;
     episodeId: string;
     sceneId: string | null;
+    dialogId: string | null;
 }

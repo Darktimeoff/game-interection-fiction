@@ -4,7 +4,7 @@ import { StoryUserService } from "@/story-user/story-user.service";
 export class GameStoryService {
     constructor(
         private readonly stateUserService: StateUserService,
-        private readonly storyUserService: StoryUserService
+        private readonly storyUserService: StoryUserService,
     ) {}
 
     async getStory(): Promise<void> {

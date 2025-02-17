@@ -8,7 +8,7 @@ export class StoryUserEntity implements StoryUserEntityInterface {
     storyId!: StoryEnum;
     episodeId!: string;
     sceneId!: string | null;
-
+    dialogId!: string | null;
     constructor(storyUser: StoryUserEntityInterface) {
         this.id = storyUser.id;
         this.userId = storyUser.userId;

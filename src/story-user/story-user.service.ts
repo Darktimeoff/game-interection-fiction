@@ -38,6 +38,7 @@ export class StoryUserService {
             storyId: story.storyId,
             episodeId: story.id,
             sceneId: null,
+            dialogId: null,
         });
 
         return {

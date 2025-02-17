@@ -6,6 +6,7 @@ import { StoryItemInterface } from "./interface/story-item.interface"
 import { SceneInterface } from "@/story/interfaces/scene.interface"
 import { DialogInterface } from "@/story/interfaces/dialog.interface"
 import { LoggerConsole } from "@/generic/logging/logger.service"
+import { StoryIteratorProgressInterface } from "./interface/story-iterator-progress.interface"
 
 @Singleton
 export class StoryIterator implements StoryIteratorInterface {
@@ -16,10 +17,17 @@ export class StoryIterator implements StoryIteratorInterface {
     private conditionMap!: Record<ConditionType, boolean>
     private isEnd: boolean = false
 
-    constructor(story?: StoryInterface, id: string | null = null) {
+    constructor(story?: StoryInterface, sceneId: string | null = null, dialogId: string | null = null) {
         this.reset()
         if(story) {
-            this.set(story, id)
+            this.set(story, sceneId, dialogId)
+        }
+    }
+
+    getProgress(): StoryIteratorProgressInterface {
+        return {
+            sceneId: this.sceneId,
+            dialogId: this.dialogId,
         }
     }
 
@@ -42,14 +50,14 @@ export class StoryIterator implements StoryIteratorInterface {
         this.isEnd = false
     }
 
-    set(item: StoryInterface, id: string | null = null): void {
+    set(item: StoryInterface, sceneId: string | null = null, dialogId: string | null = null): void {
         this.story = item
-        this.sceneId = id
-        this.dialogId = null
+        this.sceneId = sceneId
+        this.dialogId = dialogId
         this.isEnd = false
     }
 
-    selectChoice(choiceIndex: number): void {
+    selectChoice(choiceIndex: number): string {
         if(!this.story) {
             throw new Error('Story is not initialized')
         }
@@ -82,6 +90,8 @@ export class StoryIterator implements StoryIteratorInterface {
         this.sceneId = this.story?.scenes.filter(this.filterByCondition.bind(this))?.find(scene => scene.id === choice.nextScene)?.id ?? null
         this.dialogId = null
         this.isEnd = !this.sceneId
+
+        return choice.nextScene
     }
 
     next(): StoryItemInterface | null {
