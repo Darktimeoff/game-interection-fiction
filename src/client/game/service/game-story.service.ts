@@ -2,7 +2,6 @@ import { StateUserService } from "@/client/state/state-user.service";
 import { StoryRenderProgressInterface } from "@/client/story-render/interface/story-render-progress.interface";
 import { StoryRenderService } from "@/client/story-render/story-render.service";
 import { Log, LogClass } from "@/generic/logging/log.decorator";
-import { LoggerConsole, LoggerInterface } from "@/generic/logging/logger.service";
 import { StoryUserEntityInterface } from "@/story-user/entity/story-user-entity.interface";
 import { StoryUserFullEntityInterface } from "@/story-user/entity/story-user-full-entity.interface";
 import { StoryUserService } from "@/story-user/story-user.service";
@@ -11,8 +10,6 @@ import { StoryService } from "@/story/story.service";
 
 @LogClass()
 export class GameStoryService {
-    private readonly logger: LoggerInterface = new LoggerConsole('GameStoryService::')
-
     constructor(
         private readonly stateUserService: StateUserService,
         private readonly storyUserService: StoryUserService,
@@ -32,6 +29,11 @@ export class GameStoryService {
         return await this.renderStories(storyUser)
     }
 
+    @Log(
+        (storyUser) => `Render story for user ${JSON.stringify(storyUser)}`,
+        (_, storyUser) => `Rendered story for user ${JSON.stringify(storyUser)}`,
+        (error, storyUser) => `Failed to render story: ${error} for user ${JSON.stringify(storyUser)}`
+    )
     private async renderStories({story: _, ...storyUser}: StoryUserFullEntityInterface): Promise<void> {
         const tempStoryUser: StoryUserEntityInterface = {
             ...storyUser,
@@ -41,32 +43,15 @@ export class GameStoryService {
         let episodeIds = await this.stories.getSceneIds(storyUser.storyId)
 
         while(true) {
-            const item = await this.storyRenderService.next()
-            this.logger.log(`renderStories:: progress ${JSON.stringify(item)}`)
-            tempStoryUser.sceneId = item?.sceneId ?? null
-            tempStoryUser.dialogId = item?.dialogId ?? null 
+            const item = await this.renderNextScene(tempStoryUser)
 
-            if (item?.nextScene) {
-                let isLoadNewEpisode = false
-                if (episodeIds.includes(item.nextScene)) {
-                    tempStoryUser.episodeId = item.nextScene;
-                    this.logger.log(`renderStories:: next episode ${item.nextScene}`)
-                    isLoadNewEpisode = true
-                } else if (storyIds.includes(item.nextScene as StoryEnum)) {
-                    episodeIds = await this.stories.getSceneIds(item.nextScene as StoryEnum);
-                    tempStoryUser.episodeId = episodeIds[0];
-                    tempStoryUser.storyId = item.nextScene as StoryEnum;
-                    this.logger.log(`renderStories:: next story ${item.nextScene}`)
-                    isLoadNewEpisode = true
-                }
+            const initialStoryId = tempStoryUser.storyId
 
-                if(isLoadNewEpisode) {
-                    const story = await this.stories.load(tempStoryUser.storyId, tempStoryUser.episodeId);
-                    this.storyRenderService.updateStory(story);
-                }
+            await this.handleNextScene(item, tempStoryUser, episodeIds, storyIds)
+
+            if(initialStoryId !== tempStoryUser.storyId) {
+                episodeIds = await this.stories.getSceneIds(tempStoryUser.storyId)
             }
-
-            this.logger.log(`renderStories:: updateStory ${JSON.stringify(tempStoryUser)}`)
 
             await this.storyUserService.updateStoryUser(tempStoryUser);
 
@@ -76,6 +61,79 @@ export class GameStoryService {
         }
     }
 
+    @Log(
+        (item, storyUser, episodeIds, storyIds) => `Handle next scene ${item?.nextScene} ${JSON.stringify(storyUser)} ${episodeIds.join()} ${storyIds.join()}`,
+        (_, item, storyUser, episodeIds, storyIds) => `Handled next scene ${item?.nextScene} ${JSON.stringify(storyUser)} ${episodeIds.join()} ${storyIds.join()}`,
+        (error, item, storyUser, episodeIds, storyIds) => `Failed to handle next scene: ${error} ${item?.nextScene} ${JSON.stringify(storyUser)} ${episodeIds.join()} ${storyIds.join()}`
+    )
+    private async handleNextScene(item: StoryRenderProgressInterface | null, storyUser: StoryUserEntityInterface, episodeIds: string[], storyIds: StoryEnum[]): Promise<void> {
+        if(!item?.nextScene) {
+            return
+        }
+
+        const isLoadNewEpisode = 
+            this.handleEpisodeChange(item, storyUser, episodeIds)
+            ?? await this.handleStoryChange(item, storyUser, storyIds)
+        
+        if(!isLoadNewEpisode) {
+            return
+        }
+
+        const story = await this.stories.load(storyUser.storyId, storyUser.episodeId);
+        this.storyRenderService.updateStory(story);
+    }
+
+    @Log(
+        (storyUser) => `Render next scene for user ${JSON.stringify(storyUser)}`,
+        (result, storyUser) => `Rendered next scene for user ${JSON.stringify(storyUser)}: ${JSON.stringify(result)}`,
+        (error, storyUser) => `Failed to render next scene: ${error} for user ${JSON.stringify(storyUser)}`
+    )
+    private async renderNextScene(storyUser: StoryUserEntityInterface): Promise<StoryRenderProgressInterface | null> {
+        const item = await this.storyRenderService.next()
+      
+        storyUser.sceneId = item?.sceneId ?? null
+        storyUser.dialogId = item?.dialogId ?? null 
+
+        return item
+    }
+
+    @Log(
+        (item, storyUser, episodeIds) => `Handle episode change ${item?.nextScene} ${JSON.stringify(storyUser)} ${episodeIds.join(',')}`,
+        (_, item, storyUser, episodeIds) => `Handled episode change ${item?.nextScene} ${JSON.stringify(storyUser)} ${episodeIds.join(',')}`,
+        (error, item, storyUser, episodeIds) => `Failed to handle episode change: ${error} ${item?.nextScene} ${JSON.stringify(storyUser)} ${episodeIds}`
+    )
+    private handleEpisodeChange(item: StoryRenderProgressInterface | null, storyUser: StoryUserEntityInterface, episodeIds: string[]): boolean {
+        if(item?.nextScene && episodeIds.includes(item.nextScene)) {
+            storyUser.episodeId = item.nextScene
+
+            return true
+        }
+
+        return false
+    }
+
+    @Log(
+        (item, storyUser, storyIds) => `Handle story change ${item?.nextScene} ${JSON.stringify(storyUser)} ${storyIds.join(',')}`,
+        (_, item, storyUser, storyIds) => `Handled story change ${item?.nextScene} ${JSON.stringify(storyUser)} ${storyIds.join(',')}`,
+        (error, item, storyUser, storyIds) => `Failed to handle story change: ${error} ${item?.nextScene} ${JSON.stringify(storyUser)} ${storyIds}`
+    )
+    private async handleStoryChange(item: StoryRenderProgressInterface | null, storyUser: StoryUserEntityInterface, storyIds: StoryEnum[]): Promise<boolean> {
+        if(item?.nextScene && storyIds.includes(item.nextScene as StoryEnum)) {
+            const episodeIds = await this.stories.getSceneIds(item.nextScene as StoryEnum)
+            storyUser.episodeId = episodeIds[0]
+            storyUser.storyId = item.nextScene as StoryEnum
+
+            return true
+        }
+
+        return false
+    }
+
+    @Log(
+        (item, storyIds, episodeIds, storyUser) => `Check exit condition ${item?.nextScene} ${storyIds.join(',')} ${episodeIds.join(',')} ${JSON.stringify(storyUser)}`,
+        (_, item, storyIds, episodeIds, storyUser) => `Checked exit condition ${item?.nextScene} ${storyIds.join(',')} ${episodeIds.join(',')} ${JSON.stringify(storyUser)}`,
+        (error, item, storyIds, episodeIds, storyUser) => `Failed to check exit condition: ${error} ${item?.nextScene} ${storyIds} ${episodeIds} ${JSON.stringify(storyUser)}`
+    )
     private checkExitCondition(item: StoryRenderProgressInterface | null, storyIds: StoryEnum[], episodeIds: string[], storyUser: StoryUserEntityInterface): boolean {
         if(!item && storyUser.storyId === storyIds.at(-1) && storyUser.episodeId === episodeIds.at(-1)) {
             return true
