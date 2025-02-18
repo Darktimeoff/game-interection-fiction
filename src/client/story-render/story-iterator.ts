@@ -77,6 +77,8 @@ export class StoryIterator implements StoryIteratorInterface {
         const dialog = scene?.dialogs?.find(dialog => dialog.id === this.dialogId)
         const choice = dialog?.choices?.[choiceIndex]
 
+        this.logger.log(`selectChoice::choice: ${JSON.stringify(choice)}`)
+
         if(!choice) {
             throw new Error('Choice is not found')
         }
@@ -90,6 +92,7 @@ export class StoryIterator implements StoryIteratorInterface {
         this.sceneId = this.story?.scenes.filter(this.filterByCondition.bind(this))?.find(scene => scene.id === choice.nextScene)?.id ?? null
         this.dialogId = null
         this.isEnd = !this.sceneId
+        this.logger.log(`selectChoice::sceneId: ${this.sceneId} ${this.isEnd}`)
 
         return choice.nextScene
     }

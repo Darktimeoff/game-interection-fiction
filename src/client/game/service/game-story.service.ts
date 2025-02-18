@@ -32,7 +32,7 @@ export class GameStoryService {
         return await this.renderStories(storyUser)
     }
 
-    private async renderStories(storyUser: StoryUserFullEntityInterface): Promise<void> {
+    private async renderStories({story: _, ...storyUser}: StoryUserFullEntityInterface): Promise<void> {
         const tempStoryUser: StoryUserEntityInterface = {
             ...storyUser,
         }
@@ -47,16 +47,23 @@ export class GameStoryService {
             tempStoryUser.dialogId = item?.dialogId ?? null 
 
             if (item?.nextScene) {
+                let isLoadNewEpisode = false
                 if (episodeIds.includes(item.nextScene)) {
                     tempStoryUser.episodeId = item.nextScene;
+                    this.logger.log(`renderStories:: next episode ${item.nextScene}`)
+                    isLoadNewEpisode = true
                 } else if (storyIds.includes(item.nextScene as StoryEnum)) {
                     episodeIds = await this.stories.getSceneIds(item.nextScene as StoryEnum);
                     tempStoryUser.episodeId = episodeIds[0];
                     tempStoryUser.storyId = item.nextScene as StoryEnum;
+                    this.logger.log(`renderStories:: next story ${item.nextScene}`)
+                    isLoadNewEpisode = true
                 }
 
-                const story = await this.stories.load(tempStoryUser.storyId, tempStoryUser.episodeId);
-                this.storyRenderService.updateStory(story);
+                if(isLoadNewEpisode) {
+                    const story = await this.stories.load(tempStoryUser.storyId, tempStoryUser.episodeId);
+                    this.storyRenderService.updateStory(story);
+                }
             }
 
             this.logger.log(`renderStories:: updateStory ${JSON.stringify(tempStoryUser)}`)

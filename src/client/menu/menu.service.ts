@@ -46,6 +46,7 @@ export class MenuService {
 
     private async getMenuSelectUser(): Promise<void> {
         try {
+            console.clear()
             const {title} = await this.getMenuUsers()
             await this.menuActionsService.selectUserByName(title)
             console.log(`Выбран пользователь: ${title}`)

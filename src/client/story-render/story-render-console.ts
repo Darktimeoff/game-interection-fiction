@@ -21,7 +21,7 @@ export class StoryRenderConsole implements StoryRenderInterface {
         console.log(item.text)
 
         if(item.choices.length > 0) {
-            console.log('Варианты:')
+            console.log('\nВарианты:')
             item.choices.forEach(this.renderChoice)
             return Number(await this.rl.question('\nответ: ')) - 1
         }
