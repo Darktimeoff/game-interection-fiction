@@ -1,12 +1,12 @@
 import { ChoiceInterface } from "@/story/interfaces/choices.interface"
 import { StoryItemInterface } from "./interface/story-item.interface"
 import { StoryRenderInterface } from "./story-render.interface"
-import { ReadlineService } from "@/generic/readline/readline.service"
+import { ReadlineServiceInterface } from "@/generic/readline/readline-service.interface"
 
 
 export class StoryRenderConsole implements StoryRenderInterface {
     constructor(
-        private readonly rl: ReadlineService = new ReadlineService()
+        private readonly rl: ReadlineServiceInterface
     ) {
     }
 

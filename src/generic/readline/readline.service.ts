@@ -1,8 +1,9 @@
 import { createInterface, Interface } from "node:readline/promises";
 import { Singleton } from "@/generic/decorators/singleton.decorator";
+import { ReadlineServiceInterface } from "./readline-service.interface";
 
 @Singleton
-export class ReadlineService {
+export class ReadlineService implements ReadlineServiceInterface {
     private rl: Interface
 
     constructor() {

@@ -1,18 +1,12 @@
 import { StoryRenderConsole } from "../story-render-console"
 import { StoryItemInterface } from "../interface/story-item.interface"
-import { Interface } from "node:readline/promises"
+import { ReadlineServiceInterface } from "@/generic/readline/readline-service.interface"
 
-jest.mock('node:readline/promises', () => ({
-    createInterface: jest.fn(() => ({
-        question: jest.fn(),
-        close: jest.fn()
-    }))
-}))
 
 describe('StoryRenderConsole', () => {
     let storyRenderConsole: StoryRenderConsole
     let mockConsole: jest.SpyInstance[]
-    let mockReadline: Interface
+    let mockReadline: ReadlineServiceInterface
 
     beforeEach(() => {
         mockConsole = [
@@ -20,7 +14,13 @@ describe('StoryRenderConsole', () => {
             jest.spyOn(console, 'log').mockImplementation()
         ]
 
-        storyRenderConsole = new StoryRenderConsole()
+        mockReadline = {
+            question: jest.fn(),
+            pause: jest.fn(),
+            resume: jest.fn()
+        }
+
+        storyRenderConsole = new StoryRenderConsole(mockReadline)
         mockReadline = (storyRenderConsole as any).rl
     })
 
@@ -70,7 +70,7 @@ describe('StoryRenderConsole', () => {
         expect(console.clear).toHaveBeenCalled()
 
         expect(console.log).toHaveBeenCalledWith('Test text')
-        expect(console.log).toHaveBeenCalledWith('Варианты:')
+        expect(console.log).toHaveBeenCalledWith('\nВарианты:')
         expect(console.log).toHaveBeenCalledWith('1. Choice 1')
         expect(console.log).toHaveBeenCalledWith('2. Choice 2')
 
