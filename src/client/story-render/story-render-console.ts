@@ -12,7 +12,7 @@ export class StoryRenderConsole implements StoryRenderInterface {
 
 
     async render(item: StoryItemInterface): Promise<number | null> {
-        console.clear()
+        // console.clear()
 
         if(item.title) {
             console.log(item.title)

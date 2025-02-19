@@ -18,7 +18,7 @@ export class MenuService {
     @Log('getMenu', 'menu', (error) => `Failed to get menu: ${error}`)
     async getMenu(): Promise<void | MenuActionEnum> {
         try {
-            console.clear()
+            // console.clear()
             this.getMenuItems().forEach(this.prepareMenuItem)
 
             const userInput = await this.getUserInput('Выберите пункт меню:')
@@ -46,7 +46,7 @@ export class MenuService {
 
     private async getMenuSelectUser(): Promise<void> {
         try {
-            console.clear()
+            // console.clear()
             const {title} = await this.getMenuUsers()
             await this.menuActionsService.selectUserByName(title)
             console.log(`Выбран пользователь: ${title}`)
