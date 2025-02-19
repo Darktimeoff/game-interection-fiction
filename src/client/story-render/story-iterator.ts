@@ -7,6 +7,7 @@ import { SceneInterface } from "@/story/interfaces/scene.interface"
 import { DialogInterface } from "@/story/interfaces/dialog.interface"
 import { LoggerConsole } from "@/generic/logging/logger.service"
 import { StoryIteratorProgressInterface } from "./interface/story-iterator-progress.interface"
+import { ValidationError } from "@/generic/errors/validation.error"
 
 @Singleton
 export class StoryIterator implements StoryIteratorInterface {
@@ -80,7 +81,7 @@ export class StoryIterator implements StoryIteratorInterface {
         this.logger.log(`selectChoice::choice: ${JSON.stringify(choice)}`)
 
         if(!choice) {
-            throw new Error('Choice is not found')
+            throw new ValidationError('Choice is not found')
         }
 
         if(choice.setCondition) {

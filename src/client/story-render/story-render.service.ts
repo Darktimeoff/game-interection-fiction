@@ -4,6 +4,7 @@ import { StoryIteratorInterface } from "./story-iterator.interface";
 import { StoryRenderInterface } from "./story-render.interface";
 import { StoryUserFullEntityInterface } from "@/story-user/entity/story-user-full-entity.interface";
 import { StoryInterface } from "@/story/interfaces/story.interface";
+import { ValidationError } from "@/generic/errors/validation.error";
 
 @LogClass()
 export class StoryRenderService {
@@ -52,12 +53,22 @@ export class StoryRenderService {
 
         const progress = this.iterator.getProgress()
 
-        const nextScene = this.iterator.selectChoice(choiceId)
+        try {
+            const nextScene = this.iterator.selectChoice(choiceId)
 
-        return {
-            ...progress,
-            choiceId,
-            nextScene
+            return {
+                ...progress,
+                choiceId,
+                nextScene
+            }
+        } catch(error) {
+            if(error instanceof ValidationError) {
+                console.log(error.message)
+                await this.next() 
+            }
+
+           throw error
         }
+
     }
 }

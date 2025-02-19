@@ -53,7 +53,7 @@ export class MenuService {
         } catch (error) {
             if(error instanceof ValidationError) {
                 console.log(error.message)
-                await this.getMenu()
+                await this.getMenuSelectUser()
             }
         }
     }
