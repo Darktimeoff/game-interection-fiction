@@ -19,7 +19,7 @@ export class StoryRenderService {
         (error, userStory) => `Error in initialize: ${error} story: ${userStory.storyId} ${userStory.episodeId} ${userStory.sceneId} ${userStory.dialogId}`
     )
     initialize(userStory: StoryUserFullEntityInterface): void {
-        this.iterator.set(userStory.story, userStory.sceneId, userStory.dialogId)
+        this.iterator.set(userStory.story, userStory.sceneId, userStory.dialogId, userStory.conditions)
     }
 
     @Log(
@@ -47,7 +47,8 @@ export class StoryRenderService {
            return {
             ...this.iterator.getProgress(),
             nextScene: null,
-            choiceId: null
+            choiceId: null,
+            conditions: this.iterator.getConditions()
            }
         }
 
@@ -59,7 +60,8 @@ export class StoryRenderService {
             return {
                 ...progress,
                 choiceId,
-                nextScene
+                nextScene,
+                conditions: this.iterator.getConditions()
             }
         } catch(error) {
             if(error instanceof ValidationError) {

@@ -4,6 +4,7 @@ import { StoryUserFullEntityInterface } from "./entity/story-user-full-entity.in
 import { StoryUserRepository } from "./story-user.repository";
 import { StoryEnum } from "@/story/enum/story.enum";
 import { StoryService } from "@/story/story.service";
+import { CONDITIONS_INITIAL } from "./const/conditions_initial.const";
 
 export class StoryUserService {
     constructor(
@@ -53,6 +54,7 @@ export class StoryUserService {
             episodeId: story.id,
             sceneId: null,
             dialogId: null,
+            conditions: CONDITIONS_INITIAL()
         });
 
         return {

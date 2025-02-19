@@ -5,6 +5,7 @@ import { StoryInterface } from '@/story/interfaces/story.interface'
 import { StoryUserFullEntityInterface } from '@/story-user/entity/story-user-full-entity.interface'
 import { StoryItemInterface } from '../interface/story-item.interface'
 import { StoryEnum } from '@/story/enum/story.enum'
+import { CONDITIONS_INITIAL } from '@/story-user/const/conditions_initial.const'
 
 describe('StoryRenderService', () => {
     let storyRenderService: StoryRenderService
@@ -18,7 +19,7 @@ describe('StoryRenderService', () => {
             selectChoice: jest.fn(),
             next: jest.fn(),
             reset: jest.fn(),
-            getCondition: jest.fn(),
+            getConditions: jest.fn(),
             setCondition: jest.fn(),
             getProgress: jest.fn()
         }
@@ -44,7 +45,8 @@ describe('StoryRenderService', () => {
                     title: 'Test Story',
                     description: 'Test Description',
                     scenes: []
-                }
+                },
+                conditions: CONDITIONS_INITIAL()
             }
 
             storyRenderService.initialize(mockUserStory)
@@ -52,7 +54,8 @@ describe('StoryRenderService', () => {
             expect(mockIterator.set).toHaveBeenCalledWith(
                 mockUserStory.story,
                 mockUserStory.sceneId,
-                mockUserStory.dialogId
+                mockUserStory.dialogId,
+                mockUserStory.conditions
             )
         })
     })

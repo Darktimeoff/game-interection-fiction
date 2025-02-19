@@ -266,6 +266,27 @@
             ]
         },
         {
+            "id": "game_over",
+            "description": "Вы проиграли. Игра окончена.",
+            "dialogs": [
+                {
+                    "id": "0",
+                    "character": "О'Нил",
+                    "text": "Прости, Дэниел...",
+                    "choices": [
+                        {
+                            "text": "Начать заново",
+                            "nextScene": "episode1"
+                        },
+                        {
+                            "text": "Выйти из игры",
+                            "nextScene": "end"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "id": "retreat_without_daniel",
             "description": "С тяжёлым сердцем вы забираете карту и координаты.",
             "dialogs": [

@@ -3,6 +3,8 @@ export enum ConditionType {
     has_map = 'has_map'
 }
 
+export type ConditionsType =  { [key in ConditionType]: boolean }
+
 export interface ChoiceInterface {
     text: string
     nextScene: string | 'game_over' | 'episode2_01'

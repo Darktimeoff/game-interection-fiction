@@ -94,6 +94,9 @@ export class GameStoryService {
       
         storyUser.sceneId = item?.sceneId ?? null
         storyUser.dialogId = item?.dialogId ?? null 
+        if(item?.conditions) {
+            storyUser.conditions = item.conditions
+        }
 
         return item
     }
@@ -140,7 +143,7 @@ export class GameStoryService {
             return true
         }
 
-        if(item?.nextScene && ['game_over', 'end'].includes(item?.nextScene)) {
+        if(item?.nextScene && ['end'].includes(item?.nextScene)) {
             process.exit(0)
         }
 

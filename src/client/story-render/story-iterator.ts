@@ -1,13 +1,14 @@
 import { StoryInterface } from "@/story/interfaces/story.interface"
 import { StoryIteratorInterface } from "./story-iterator.interface"
 import { Singleton } from "@/generic/decorators/singleton.decorator"
-import { ConditionType } from "@/story/interfaces/choices.interface"
+import { ConditionsType, ConditionType } from "@/story/interfaces/choices.interface"
 import { StoryItemInterface } from "./interface/story-item.interface"
 import { SceneInterface } from "@/story/interfaces/scene.interface"
 import { DialogInterface } from "@/story/interfaces/dialog.interface"
 import { LoggerConsole } from "@/generic/logging/logger.service"
 import { StoryIteratorProgressInterface } from "./interface/story-iterator-progress.interface"
 import { ValidationError } from "@/generic/errors/validation.error"
+import { CONDITIONS_INITIAL } from "@/story-user/const/conditions_initial.const"
 
 @Singleton
 export class StoryIterator implements StoryIteratorInterface {
@@ -15,13 +16,13 @@ export class StoryIterator implements StoryIteratorInterface {
     private story: StoryInterface | null = null
     private sceneId: string | null = null
     private dialogId: string | null = null
-    private conditionMap!: Record<ConditionType, boolean>
+    private conditionMap!: ConditionsType
     private isEnd: boolean = false
 
-    constructor(story?: StoryInterface, sceneId: string | null = null, dialogId: string | null = null) {
+    constructor(story?: StoryInterface, sceneId: string | null = null, dialogId: string | null = null, conditions: ConditionsType = CONDITIONS_INITIAL()) {
         this.reset()
         if(story) {
-            this.set(story, sceneId, dialogId)
+            this.set(story, sceneId, dialogId, conditions)
         }
     }
 
@@ -32,8 +33,8 @@ export class StoryIterator implements StoryIteratorInterface {
         }
     }
 
-    getCondition(condition: ConditionType): boolean {
-        return this.conditionMap[condition]
+    getConditions(): ConditionsType {
+        return this.conditionMap
     }
 
     setCondition(condition: ConditionType, value: boolean): void {
@@ -47,14 +48,17 @@ export class StoryIterator implements StoryIteratorInterface {
         this.conditionMap = Object.values(ConditionType).reduce((acc, type) => {
             acc[type] = true
             return acc
-        }, {} as Record<ConditionType, boolean>)
+        }, {} as ConditionsType)
         this.isEnd = false
     }
 
-    set(item: StoryInterface, sceneId: string | null = null, dialogId: string | null = null): void {
+    set(item: StoryInterface, sceneId: string | null = null, dialogId: string | null = null, conditions?: ConditionsType): void {
         this.story = item
         this.sceneId = sceneId
         this.dialogId = dialogId
+        if(conditions) {
+            this.conditionMap = conditions
+        }
         this.isEnd = false
     }
 

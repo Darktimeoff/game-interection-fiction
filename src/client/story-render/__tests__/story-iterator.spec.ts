@@ -140,7 +140,7 @@ describe('StoryIterator', () => {
         storyIterator.selectChoice(0);
         
         // Проверяем, что условие изменилось
-        expect(storyIterator.getCondition(ConditionType.daniel_alive)).toBe(false);
+        expect(storyIterator.getConditions()[ConditionType.daniel_alive]).toBe(false);
     });
 
     it('should skip dialogs that don\'t meet conditions', () => {
