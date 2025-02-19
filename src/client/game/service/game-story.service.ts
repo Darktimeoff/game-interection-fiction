@@ -74,7 +74,7 @@ export class GameStoryService {
 
         const isLoadNewEpisode = 
             this.handleEpisodeChange(item, storyUser, episodeIds)
-            ?? await this.handleStoryChange(item, storyUser, storyIds)
+            || await this.handleStoryChange(item, storyUser, storyIds)
         
         if(!isLoadNewEpisode) {
             return
@@ -141,7 +141,7 @@ export class GameStoryService {
         }
 
         if(item?.nextScene && ['game_over', 'end'].includes(item?.nextScene)) {
-            return true
+            process.exit(0)
         }
 
         return false
