@@ -48,6 +48,7 @@ export class GameStoryService {
             const initialStoryId = tempStoryUser.storyId
 
             await this.handleNextScene(item, tempStoryUser, episodeIds, storyIds)
+            
 
             if(initialStoryId !== tempStoryUser.storyId) {
                 episodeIds = await this.stories.getSceneIds(tempStoryUser.storyId)
