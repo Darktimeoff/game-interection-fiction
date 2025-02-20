@@ -1,7 +1,8 @@
-import { StateUserService } from "@/client/state/state-user.service";
+import { GetCurrentUserQuery } from "@/client/state/query/get-current-user.query";
 import { StoryRenderProgressInterface } from "@/client/story-render/interface/story-render-progress.interface";
 import { StoryRenderService } from "@/client/story-render/story-render.service";
 import { CommandBusInterface } from "@/generic/cqrs/command/interface/command-bus.interface";
+import { QueryBusInterface } from "@/generic/cqrs/query/interface/query-bus.interface";
 import { Log, LogClass } from "@/generic/logging/log.decorator";
 import { UpdateStoryUserCommand } from "@/story-user/command/update-story-user.command";
 import { StoryUserEntityInterface } from "@/story-user/entity/story-user-entity.interface";
@@ -13,16 +14,16 @@ import { StoryService } from "@/story/story.service";
 @LogClass()
 export class GameStoryService {
     constructor(
-        private readonly stateUserService: StateUserService,
         private readonly storyUserService: StoryUserService,
         private readonly storyRenderService: StoryRenderService,
         private readonly stories: StoryService,
-        private readonly commandBus: CommandBusInterface
+        private readonly commandBus: CommandBusInterface,
+        private readonly queryBus: QueryBusInterface
     ) {}
 
     @Log('initializeStory', 'game', (error) => `Failed to initialize story: ${error}`)
     async initializeStory(): Promise<void> {
-        const user = this.stateUserService.getCurrentUser()
+        const user = await this.queryBus.execute(new GetCurrentUserQuery())
         if(!user) {
             throw new Error('Current user not selected')
         }
