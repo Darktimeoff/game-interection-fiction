@@ -16,9 +16,12 @@ export class Bus<TKey extends object, D extends object> implements BusInterface<
         this.mapped.set(key, handler)
     }
 
-
+    @Log(
+        (key) => `Unregister key: ${key?.constructor?.name}`,
+        (_, key) => `Unregistered handler ${key?.constructor?.name}`,
+        (error, key) => `Failed to unregister handler ${key?.constructor?.name}: ${error}`
+    )
     public unregister<T extends TKey>(key: { new (...args: any[]): T }): void {
-        this.mapped.delete(key.constructor)
+        this.mapped.delete(key)
     }
-
 }
