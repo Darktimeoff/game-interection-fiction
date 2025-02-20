@@ -7,14 +7,13 @@ import { Log, LogClass } from "@/generic/logging/log.decorator";
 import { UpdateStoryUserCommand } from "@/story-user/command/update-story-user.command";
 import { StoryUserEntityInterface } from "@/story-user/entity/story-user-entity.interface";
 import { StoryUserFullEntityInterface } from "@/story-user/entity/story-user-full-entity.interface";
-import { StoryUserService } from "@/story-user/story-user.service";
+import { GetStoryUserByUserIdQuery } from "@/story-user/query/get-story-user-by-user-id.query";
 import { StoryEnum } from "@/story/enum/story.enum";
 import { StoryService } from "@/story/story.service";
 
 @LogClass()
 export class GameStoryService {
     constructor(
-        private readonly storyUserService: StoryUserService,
         private readonly storyRenderService: StoryRenderService,
         private readonly stories: StoryService,
         private readonly commandBus: CommandBusInterface,
@@ -28,7 +27,7 @@ export class GameStoryService {
             throw new Error('Current user not selected')
         }
 
-        const storyUser = await this.storyUserService.findByUserId(user.id)
+        const storyUser = await this.queryBus.execute(new GetStoryUserByUserIdQuery(user.id))
         await this.storyRenderService.initialize(storyUser)
         return await this.renderStories(storyUser)
     }
