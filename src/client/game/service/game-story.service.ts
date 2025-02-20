@@ -65,6 +65,23 @@ export class GameStoryService {
     }
 
     @Log(
+        (storyUser) => `Render next scene for user ${JSON.stringify(storyUser)}`,
+        (result, storyUser) => `Rendered next scene for user ${JSON.stringify(storyUser)}: ${JSON.stringify(result)}`,
+        (error, storyUser) => `Failed to render next scene: ${error} for user ${JSON.stringify(storyUser)}`
+    )
+    private async renderNextScene(storyUser: StoryUserEntityInterface): Promise<StoryRenderProgressInterface | null> {
+        const item = await this.storyRenderService.next()
+      
+        storyUser.sceneId = item?.sceneId ?? null
+        storyUser.dialogId = item?.dialogId ?? null 
+        if(item?.conditions) {
+            storyUser.conditions = item.conditions
+        }
+
+        return item
+    }
+
+    @Log(
         (item, storyUser, episodeIds, storyIds) => `Handle next scene ${item?.nextScene} ${JSON.stringify(storyUser)} ${episodeIds.join()} ${storyIds.join()}`,
         (_, item, storyUser, episodeIds, storyIds) => `Handled next scene ${item?.nextScene} ${JSON.stringify(storyUser)} ${episodeIds.join()} ${storyIds.join()}`,
         (error, item, storyUser, episodeIds, storyIds) => `Failed to handle next scene: ${error} ${item?.nextScene} ${JSON.stringify(storyUser)} ${episodeIds.join()} ${storyIds.join()}`
@@ -84,23 +101,6 @@ export class GameStoryService {
 
         const story = await this.stories.load(storyUser.storyId, storyUser.episodeId);
         this.storyRenderService.updateStory(story);
-    }
-
-    @Log(
-        (storyUser) => `Render next scene for user ${JSON.stringify(storyUser)}`,
-        (result, storyUser) => `Rendered next scene for user ${JSON.stringify(storyUser)}: ${JSON.stringify(result)}`,
-        (error, storyUser) => `Failed to render next scene: ${error} for user ${JSON.stringify(storyUser)}`
-    )
-    private async renderNextScene(storyUser: StoryUserEntityInterface): Promise<StoryRenderProgressInterface | null> {
-        const item = await this.storyRenderService.next()
-      
-        storyUser.sceneId = item?.sceneId ?? null
-        storyUser.dialogId = item?.dialogId ?? null 
-        if(item?.conditions) {
-            storyUser.conditions = item.conditions
-        }
-
-        return item
     }
 
     @Log(
