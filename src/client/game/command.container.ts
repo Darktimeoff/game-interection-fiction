@@ -1,4 +1,4 @@
-import { CommandBus } from "@/generic/cqrs/command/bus/bus"
+
 import { UpdateStoryUserCommandHandler } from "@/story-user/command-handler/update-story-user-command.handler"
 import { UpdateStoryUserCommand } from "@/story-user/command/update-story-user.command"
 import storyUserService from "@/story-user/story-user.container"
@@ -9,6 +9,7 @@ import { SelectUserCommandHandler } from "@/client/state/command-handler/select-
 import { SelectUserCommand } from "@/client/state/command/select-user.command"
 import { DeleteUserCommandHandler } from "@/client/state/command-handler/delete-user.command-handler"
 import { DeleteUserCommand } from "@/client/state/command/delete-user.command"
+import { CommandBus } from "@/generic/cqrs/command/bus/command-bus"
 
 export const commandBus = new CommandBus()
 

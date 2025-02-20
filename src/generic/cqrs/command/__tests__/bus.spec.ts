@@ -1,4 +1,4 @@
-import { CommandBus } from '../bus/bus'
+import { CommandBus } from '../bus/command-bus'
 import { CommandInterface } from '../command.interface'
 import { CommandHandlerInterface } from '../command-handler.interface'
 
