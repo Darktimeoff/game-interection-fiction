@@ -1,4 +1,4 @@
-import { CommandHandlerInterface } from "@/generic/cqrs/command/command-handler.interface";
+import { CommandHandlerInterface } from "@/generic/cqrs/command/interface/command-handler.interface";
 import { StateUserService } from "@/client/state/state-user.service";
 import { DeleteUserCommand } from "@/client/state/command/delete-user.command";
 

@@ -1,4 +1,4 @@
-import { CommandHandlerInterface } from "@/generic/cqrs/command/command-handler.interface";
+import { CommandHandlerInterface } from "@/generic/cqrs/command/interface/command-handler.interface";
 import { UpdateStoryUserCommand } from "@/story-user/command/update-story-user.command";
 import { StoryUserService } from "@/story-user/story-user.service";
 

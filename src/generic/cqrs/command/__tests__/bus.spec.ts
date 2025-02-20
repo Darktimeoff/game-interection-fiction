@@ -1,6 +1,6 @@
-import { CommandBus } from '../command-bus'
-import { CommandInterface } from '../interface/command.interface'
-import { CommandHandlerInterface } from '../interface/command-handler.interface'
+import { CommandBus } from '@/generic/cqrs/command/command-bus'
+import { CommandInterface } from '@/generic/cqrs/command/interface/command.interface'
+import { CommandHandlerInterface } from '@/generic/cqrs/command/interface/command-handler.interface'
 
 // Test Commands
 class TestCommand implements CommandInterface {

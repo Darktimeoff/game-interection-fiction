@@ -1,7 +1,7 @@
 import { Singleton } from "@/generic/decorators/singleton.decorator"
-import { CommandInterface } from "@/generic/cqrs/command/command.interface"
-import { CommandHandlerInterface } from "@/generic/cqrs/command/command-handler.interface"
-import { CommandBusInterface } from "./command-bus.interface"
+import { CommandInterface } from "@/generic/cqrs/command/interface/command.interface"
+import { CommandHandlerInterface } from "@/generic/cqrs/command/interface/command-handler.interface"
+import { CommandBusInterface } from "./interface/command-bus.interface"
 import { Log, LogClass } from "@/generic/logging/log.decorator"
 import { Bus } from "@/generic/cqrs/bus/bus"
 

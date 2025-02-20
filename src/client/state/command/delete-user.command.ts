@@ -1,4 +1,4 @@
-import { CommandInterface } from "@/generic/cqrs/command/command.interface";
+import { CommandInterface } from "@/generic/cqrs/command/interface/command.interface";
 
 export class DeleteUserCommand implements CommandInterface {
     constructor(

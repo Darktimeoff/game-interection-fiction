@@ -9,7 +9,7 @@ import { SelectUserCommandHandler } from "@/client/state/command-handler/select-
 import { SelectUserCommand } from "@/client/state/command/select-user.command"
 import { DeleteUserCommandHandler } from "@/client/state/command-handler/delete-user.command-handler"
 import { DeleteUserCommand } from "@/client/state/command/delete-user.command"
-import { CommandBus } from "@/generic/cqrs/command/bus/command-bus"
+import { CommandBus } from "@/generic/cqrs/command/command-bus"
 
 export const commandBus = new CommandBus()
 

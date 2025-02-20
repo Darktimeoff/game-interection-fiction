@@ -1,4 +1,4 @@
-import { CommandInterface } from "@/generic/cqrs/command/command.interface";
+import { CommandInterface } from "@/generic/cqrs/command/interface/command.interface";
 import { StoryUserEntityInterface } from "@/story-user/entity/story-user-entity.interface";
 
 export class UpdateStoryUserCommand implements CommandInterface {

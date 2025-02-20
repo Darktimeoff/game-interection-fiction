@@ -1,7 +1,7 @@
 import { StateUserService } from "@/client/state/state-user.service";
 import { StoryRenderProgressInterface } from "@/client/story-render/interface/story-render-progress.interface";
 import { StoryRenderService } from "@/client/story-render/story-render.service";
-import { CommandBusInterface } from "@/generic/cqrs/command/bus/command-bus.interface";
+import { CommandBusInterface } from "@/generic/cqrs/command/interface/command-bus.interface";
 import { Log, LogClass } from "@/generic/logging/log.decorator";
 import { UpdateStoryUserCommand } from "@/story-user/command/update-story-user.command";
 import { StoryUserEntityInterface } from "@/story-user/entity/story-user-entity.interface";

@@ -5,7 +5,7 @@ import { StateUserService } from "@/client/state/state-user.service";
 import { ValidationError } from "@/generic/errors/validation.error";
 import { MenuActionEnum } from "./enum/menu-action.enum";
 import { ReadlineService } from "@/generic/readline/readline.service";
-import { CommandBusInterface } from "@/generic/cqrs/command/bus/command-bus.interface";
+import { CommandBusInterface } from "@/generic/cqrs/command/interface/command-bus.interface";
 import { CreateUserCommand } from "@/client/state/command/create-user.command";
 import { SelectUserCommand } from "@/client/state/command/select-user.command";
 import { DeleteUserCommand } from "@/client/state/command/delete-user.command";
