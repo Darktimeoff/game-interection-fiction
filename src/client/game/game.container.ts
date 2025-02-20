@@ -7,12 +7,14 @@ import storyUserContainer from "@/story-user/story-user.container";
 import { GameStoryService } from "./service/game-story.service";
 import storyRenderService from "@/client/story-render/story-render.container";
 import storyService from "@/story/story.container";
+import { commandBus } from "./command.container";
 
 const gameStoryService = new GameStoryService(
     stateContainer,
     storyUserContainer,
     storyRenderService,
-    storyService
+    storyService,
+    commandBus
 )
 
 const gameService = new GameService(

@@ -5,11 +5,16 @@ import { StateUserService } from "@/client/state/state-user.service";
 import { ValidationError } from "@/generic/errors/validation.error";
 import { MenuActionEnum } from "./enum/menu-action.enum";
 import { ReadlineService } from "@/generic/readline/readline.service";
+import { CommandBusInterface } from "@/generic/cqrs/command/bus/bus.interface";
+import { CreateUserCommand } from "@/client/state/command/create-user.command";
+import { SelectUserCommand } from "@/client/state/command/select-user.command";
+import { DeleteUserCommand } from "@/client/state/command/delete-user.command";
 
 @LogClass()
 export class MenuService {
     constructor(
         private readonly menuActionsService: StateUserService,
+        private readonly commandBus: CommandBusInterface,
         private readonly logger: LoggerInterface = new LoggerConsole('MenuService:: '),
         private readonly rl: ReadlineService = new ReadlineService()
     ) {
@@ -18,7 +23,7 @@ export class MenuService {
     @Log('getMenu', 'menu', (error) => `Failed to get menu: ${error}`)
     async getMenu(): Promise<void | MenuActionEnum> {
         try {
-            // console.clear()
+            console.clear()
             this.getMenuItems().forEach(this.prepareMenuItem)
 
             const userInput = await this.getUserInput('Выберите пункт меню:')
@@ -32,6 +37,10 @@ export class MenuService {
             }
 
             await menuItem.action()
+
+            if(menuItem.id === MenuActionEnum.DELETE_USER) {
+                await this.getMenu()
+            }
            
             return menuItem.id
         } catch (error) {
@@ -46,9 +55,9 @@ export class MenuService {
 
     private async getMenuSelectUser(): Promise<void> {
         try {
-            // console.clear()
+            console.clear()
             const {title} = await this.getMenuUsers()
-            await this.menuActionsService.selectUserByName(title)
+            await this.commandBus.execute(new SelectUserCommand(title))
             console.log(`Выбран пользователь: ${title}`)
         } catch (error) {
             if(error instanceof ValidationError) {
@@ -79,8 +88,9 @@ export class MenuService {
 
     private async getMenuDeleteUser(): Promise<void> {
         try {
+            console.clear()
             const {title} = await this.getMenuUsers()
-            await this.menuActionsService.deleteUserByName(title)
+            await this.commandBus.execute(new DeleteUserCommand(title))
             console.log(`Персонаж ${title} успешно удален`)
         } catch (error) {
             if(error instanceof ValidationError) {
@@ -92,9 +102,10 @@ export class MenuService {
 
     private async getMenuCreateUser(): Promise<void> {
         try {
+            console.clear()
             const userName = await this.getUserInput('Введите имя персонажа:')
 
-            await this.menuActionsService.createUser(userName)
+            await this.commandBus.execute(new CreateUserCommand(userName))
 
             console.log(`Персонаж ${userName} успешно создан`)
         } catch (error) {
@@ -132,7 +143,7 @@ export class MenuService {
             },
             {
                 "id": MenuActionEnum.CREATE_USER,
-                "title": "Создать новго персонажа",
+                "title": "Создать нового персонажа",
                 "action": async () => await this.getMenuCreateUser()
             }, 
             {

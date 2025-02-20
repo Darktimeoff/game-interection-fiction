@@ -1,7 +1,9 @@
 import { StateUserService } from "@/client/state/state-user.service";
 import { StoryRenderProgressInterface } from "@/client/story-render/interface/story-render-progress.interface";
 import { StoryRenderService } from "@/client/story-render/story-render.service";
+import { CommandBusInterface } from "@/generic/cqrs/command/bus/bus.interface";
 import { Log, LogClass } from "@/generic/logging/log.decorator";
+import { UpdateStoryUserCommand } from "@/story-user/command/update-story-user.command";
 import { StoryUserEntityInterface } from "@/story-user/entity/story-user-entity.interface";
 import { StoryUserFullEntityInterface } from "@/story-user/entity/story-user-full-entity.interface";
 import { StoryUserService } from "@/story-user/story-user.service";
@@ -14,7 +16,8 @@ export class GameStoryService {
         private readonly stateUserService: StateUserService,
         private readonly storyUserService: StoryUserService,
         private readonly storyRenderService: StoryRenderService,
-        private readonly stories: StoryService
+        private readonly stories: StoryService,
+        private readonly commandBus: CommandBusInterface
     ) {}
 
     @Log('initializeStory', 'game', (error) => `Failed to initialize story: ${error}`)
@@ -49,12 +52,11 @@ export class GameStoryService {
 
             await this.handleNextScene(item, tempStoryUser, episodeIds, storyIds)
             
-
             if(initialStoryId !== tempStoryUser.storyId) {
                 episodeIds = await this.stories.getSceneIds(tempStoryUser.storyId)
             }
 
-            await this.storyUserService.updateStoryUser(tempStoryUser);
+            await this.commandBus.execute(new UpdateStoryUserCommand(tempStoryUser));
 
             if(this.checkExitCondition(item, storyIds, episodeIds, tempStoryUser)) {
                 break
