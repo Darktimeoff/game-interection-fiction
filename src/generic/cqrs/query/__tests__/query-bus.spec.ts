@@ -1,11 +1,14 @@
 
 import { QueryBus } from '@/generic/cqrs/query/query-bus'
-import { QueryInterface } from '@/generic/cqrs/query/interface/query.interface'
 import { QueryHandlerInterface } from '@/generic/cqrs/query/interface/query-handler.interface'
+import { Query } from '@/generic/cqrs/query/query'
+import { QueryBusInterface } from '@/generic/cqrs/query/interface/query-bus.interface'
 
 // Mock query and handler for testing
-class TestQuery implements QueryInterface {
-    constructor(public readonly data: string) {}
+class TestQuery extends Query<string> {
+    constructor(public readonly data: string) {
+        super()
+    }
 }
 
 class TestQueryHandler implements QueryHandlerInterface<TestQuery> {
@@ -14,12 +17,14 @@ class TestQueryHandler implements QueryHandlerInterface<TestQuery> {
     }
 }
 
-class TestQuery2 implements QueryInterface {
-    constructor(public readonly data: string) {}
+class TestQuery2 extends Query<string> {
+    constructor(public readonly data: string) {
+        super()
+    }
 }
 
 describe('QueryBus', () => {
-    let queryBus: QueryBus
+    let queryBus: QueryBusInterface
 
     beforeEach(() => {
         queryBus = new QueryBus()

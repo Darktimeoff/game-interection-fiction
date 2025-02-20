@@ -7,12 +7,12 @@ import { QueryBusInterface } from "./interface/query-bus.interface";
 
 @Singleton
 @LogClass()
-export class QueryBus<QueryBase extends QueryInterface = QueryInterface> extends Bus<QueryBase, QueryHandlerInterface<QueryBase>> implements QueryBusInterface<QueryBase> {
+export class QueryBus extends Bus<QueryInterface, QueryHandlerInterface<QueryInterface>> implements QueryBusInterface {
     constructor() {
         super()
     }
 
-    public async execute<T extends QueryBase, TRes = any>(query: T): Promise<TRes> {
+    public async execute<T extends QueryInterface, TRes = T['__type']>(query: T): Promise<TRes> {
         const handler = this.mapped.get(query.constructor)
 
         if(!handler) {

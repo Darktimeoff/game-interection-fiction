@@ -1,7 +1,6 @@
 import { Log, LogClass } from "@/generic/logging/log.decorator";
 import { MenuItemActionInterface, MenuItemInterface } from "./interface/menu-item.interface";
 import { LoggerConsole, LoggerInterface } from "@/generic/logging/logger.service";
-import { StateUserService } from "@/client/state/state-user.service";
 import { ValidationError } from "@/generic/errors/validation.error";
 import { MenuActionEnum } from "./enum/menu-action.enum";
 import { ReadlineService } from "@/generic/readline/readline.service";
@@ -9,11 +8,13 @@ import { CommandBusInterface } from "@/generic/cqrs/command/interface/command-bu
 import { CreateUserCommand } from "@/client/state/command/create-user.command";
 import { SelectUserCommand } from "@/client/state/command/select-user.command";
 import { DeleteUserCommand } from "@/client/state/command/delete-user.command";
+import { QueryBusInterface } from "@/generic/cqrs/query/interface/query-bus.interface";
+import { GetAllUserQuery } from "../state/query/get-all-user.query";
 
 @LogClass()
 export class MenuService {
     constructor(
-        private readonly menuActionsService: StateUserService,
+        private readonly queryBus: QueryBusInterface,
         private readonly commandBus: CommandBusInterface,
         private readonly logger: LoggerInterface = new LoggerConsole('MenuService:: '),
         private readonly rl: ReadlineService = new ReadlineService()
@@ -68,7 +69,7 @@ export class MenuService {
     }
 
     private async getMenuUsers(): Promise<MenuItemInterface> {
-        const users = await this.menuActionsService.getUsers()
+        const users = await this.queryBus.execute(new GetAllUserQuery())
         if(users.length === 0) {
             throw new ValidationError('Нет пользователей')
         }
