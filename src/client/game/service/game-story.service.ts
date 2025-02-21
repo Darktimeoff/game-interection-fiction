@@ -22,21 +22,28 @@ export class GameStoryService {
             throw new Error('Current user not selected')
         }
         while(true) {
-            const {item, state} = await this.queryBus.execute(new GetStoryItemByUserIdQuery(user.id))
-            await this.commandBus.execute(new UpdateStoryStateCommand(user.id, state))
-
-            if(!item) {
-                continue
-            }
-
-            const choice = await this.storyRender.render(item)
-            if(choice === null) {
-                continue
-            }
-
-            await this.commandBus.execute(new SelectStoryChoiceCommandByUserId(user.id, choice))
+            await this.renderScene(user.id)
         }
     }
 
-  
+    private async renderScene(userId: number): Promise<void> {
+        const {item, state} = await this.queryBus.execute(new GetStoryItemByUserIdQuery(userId))
+        await this.commandBus.execute(new UpdateStoryStateCommand(userId, state))
+
+        if(!item) {
+            return
+        }
+
+        const choice = await this.storyRender.render(item)
+        if(choice === null) {
+            return
+        }
+        
+        
+        try {
+            await this.commandBus.execute(new SelectStoryChoiceCommandByUserId(userId, choice))
+        } catch(error) {
+            await this.renderScene(userId)
+        }
+    }
 }
