@@ -1,55 +1,34 @@
 import { Singleton } from "@/generic/decorators/singleton.decorator"
-import { Log, LogClass } from "@/generic/logging/log.decorator"
 
-interface ServiceLocatorInterface {
-    register(id: object, value: object): void
+interface ServiceLocatorInterface<TKey extends string | object = string | object> {
+    register(id: TKey, value: object): void
 
-    unregister(id: object): void
+    unregister(id: TKey): void
 
-    has(id: object): boolean
+    has(id: TKey): boolean
 
-    get<T>(id: object): T | null
+    get<T>(id: TKey): T | null
 }
 
 @Singleton
-@LogClass()
-export class ServiceLocator implements ServiceLocatorInterface {
-    private serviceMap: Map<object, object> = new Map()
+export class ServiceLocator<TKey extends string | object = string | object> implements ServiceLocatorInterface<TKey> {
+    private serviceMap: Map<TKey, object> = new Map()
 
-    @Log(
-        (id, value) => `Registering service ${id} with value ${value}`,
-        (id, value) => `Service ${id} with value ${value} registered`,
-        (err) => `Error registering service: ${err}`
-    )
-    register(id: object, value: object) {
+
+    register(id: TKey, value: object) {
         this.serviceMap.set(id, value)
     }
 
-    @Log(
-        (id) => `Unregistering service ${id}`,
-        (id) => `Service ${id} unregistered`,
-        (err) => `Error unregistering service: ${err}`
-    )
-    unregister(id: object) {
+    unregister(id: TKey) {
         this.serviceMap.delete(id)
     }
 
-    @Log(
-        (id) => `Checking if service ${id} is registered`,
-        (result, id) => `Service ${id} is registered: ${result}`,
-        (err, id) => `Error checking if service ${id} is registered: ${err}`
-    )           
-    has(id: object): boolean {
+        
+    has(id: TKey): boolean {
         return this.serviceMap.has(id)
     } 
 
-    // @ts-ignore
-    @Log(
-        (id) => `Getting service ${id}`,
-        (result, id) => `Service ${id} found: ${result}`,
-        (err, id) => `Error getting service ${id}: ${err}`
-    )
-    get<T>(id: object): T | null {
+    get<T>(id: TKey): T | null {
         return this.serviceMap.get(id) as T ?? null
     }
 }

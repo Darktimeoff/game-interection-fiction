@@ -1,16 +1,23 @@
-import { LoggerConsole, LoggerInterface } from "@/generic/logging/logger.service";  
+import { LoggerInterface } from "@/generic/logging/logger.service";  
 import { DecoratedMethodResultType } from "@/generic/decorators/type/decorated-method-result.type";
 import { MethodDecoratorType } from "@/generic/decorators/type/method-decorator.type";
+import { serviceLocator } from "@/client/app/app.container";
+import { ServiceEnum } from "../service-locator/service.enum";
 
-export function LogClass(logger: LoggerInterface = new LoggerConsole()) {
+export function LogClass()  {
+    const logger = serviceLocator.get<LoggerInterface>(ServiceEnum.Logger)
+    if (!logger) {
+        throw new Error('Logger not found')
+    }
+
     return <T extends { new (...args: any[]): {} }>(constructor: T) => {
-        logger.setContext(`${constructor.name}::constructor `);
-
         try {
+            logger.setContext(`${constructor.name}::constructor `);
+
             return class extends constructor {
                 constructor(...args: any[]) {
                     super(...args);
-                    logger.log(`initialized`);
+                    logger!.log(`initialized`);
                 }
             };
         } catch (error) {
@@ -53,16 +60,21 @@ export const Log =
     <TResult, TArgs extends unknown[] = unknown[]>(
         preLog: PreDecoratorFunction<TArgs> | string,
         postLog?: PostLogFunction<DecoratedMethodResultType<TResult>, TArgs> | string,
-        errorLog?: ErrorLogFunction<TArgs> | string,
-        logger: LoggerInterface = new LoggerConsole()
+        errorLog?: ErrorLogFunction<TArgs> | string
     ): MethodDecoratorType<TResult, TArgs> =>
     (target, propertyKey, descriptor) => {
-        logger.setContext(`${target.constructor.name}::${String(propertyKey)} `);
-
         const originalMethod = descriptor.value!;
 
         descriptor.value = function (...args: TArgs): TResult {
             type R = DecoratedMethodResultType<TResult>;
+
+
+            const logger = serviceLocator.get<LoggerInterface>(ServiceEnum.Logger)
+            if (!logger) {
+                throw new Error('Logger not found')
+            }
+
+            logger.setContext(`${target.constructor.name}::${String(propertyKey)} `);
 
             const runPreLog = (): void => {
                 if (typeof preLog === 'string') {

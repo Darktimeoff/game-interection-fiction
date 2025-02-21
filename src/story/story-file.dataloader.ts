@@ -8,10 +8,14 @@ import { readdir } from "node:fs/promises";
 
 export class StoryFileDataloader implements StoryDataloaderInterface {
     private readonly dataPath = join(__dirname, '..', 'data', 'stories');
-    private initialSceneId = '01';
+    private _initialSceneId = '01';
 
     get path(): string {
         return this.dataPath;
+    }
+
+    get initialSceneId(): string {
+        return this._initialSceneId;
     }
 
     async load(storyId: StoryEnum = StoryEnum.episode1, sceneId: string = this.initialSceneId): Promise<StoryFullInterface> {
