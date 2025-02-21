@@ -48,7 +48,7 @@ export class MenuService {
             return menuItem.id
         } catch (error) {
             if(error instanceof ValidationError) {
-                await this.showMessage(error.message)
+                console.log(error.message)
                 await this.getMenu()
             }
 
@@ -61,10 +61,10 @@ export class MenuService {
             console.clear()
             const {title} = await this.getMenuUsers()
             await this.commandBus.execute(new SelectUserCommand(title))
-            await this.showMessage(`Выбран пользователь: ${title}`)
+            console.log(`Выбран пользователь: ${title}`)
         } catch (error) {
             if(error instanceof ValidationError) {
-                await this.showMessage(error.message)
+                await this.showErrorMessage(error.message)
                 await this.getMenuSelectUser()
             }
         }
@@ -73,8 +73,7 @@ export class MenuService {
     private async getMenuUsers(): Promise<MenuItemInterface> {
         const users = await this.queryBus.execute(new GetAllUserQuery())
         if(users.length === 0) {
-            await this.showMessage('Нет пользователей')
-            await sleep(2000)
+            await this.showErrorMessage('Нет пользователей')
             await this.getMenu()
         }
 
@@ -96,10 +95,10 @@ export class MenuService {
             console.clear()
             const {title} = await this.getMenuUsers()
             await this.commandBus.execute(new DeleteUserCommand(title))
-            await this.showMessage(`Персонаж ${title} успешно удален`)
+            console.log(`Персонаж ${title} успешно удален`)
         } catch (error) {
             if(error instanceof ValidationError) {
-                await this.showMessage(error.message)
+                await this.showErrorMessage(error.message)
                 await this.getMenu()
             }
         }
@@ -108,14 +107,15 @@ export class MenuService {
     private async getMenuCreateUser(): Promise<void> {
         try {
             console.clear()
+
             const userName = await this.getUserInput('Введите имя персонажа:')
 
             await this.commandBus.execute(new CreateUserCommand(userName))
 
-            await this.showMessage(`Персонаж ${userName} успешно создан`)
+            console.log(`Персонаж ${userName} успешно создан`)
         } catch (error) {
             if(error instanceof ValidationError) {
-                await this.showMessage(error.message)
+                await this.showErrorMessage(error.message)
                 await this.getMenuCreateUser()
             }
 
@@ -174,7 +174,7 @@ export class MenuService {
         }
     }
 
-    private async showMessage(message: string): Promise<void> {
+    private async showErrorMessage(message: string): Promise<void> {
         console.log(message)
         await sleep(this.SHOW_MESSAGE_DELAY)
     }
