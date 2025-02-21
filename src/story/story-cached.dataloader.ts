@@ -15,6 +15,10 @@ export class StoryCachedDataLoader implements StoryDataloaderInterface {
         return this.stories.initialSceneId;
     }
 
+    get initialStoryId(): StoryEnum {
+        return this.stories.initialStoryId;
+    }
+
     @Cache(
         (storyId: StoryEnum, sceneId: string) => `${storyId}-${sceneId}`
     )

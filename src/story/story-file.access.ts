@@ -14,7 +14,11 @@ export class StoryFileAccess implements StoryDataloaderInterface {
         return this.storyDataloader.initialSceneId;
     }
 
-    async load(storyId: StoryEnum = StoryEnum.episode1, sceneId: string = ''): Promise<StoryFullInterface> {
+    get initialStoryId(): StoryEnum {
+        return this.storyDataloader.initialStoryId;
+    }
+
+    async load(storyId: StoryEnum = this.initialStoryId, sceneId: string = this.initialSceneId): Promise<StoryFullInterface> {
         await this.validateStoryId(storyId);
         await this.validateSceneId(storyId, sceneId);
 

@@ -18,7 +18,11 @@ export class StoryFileDataloader implements StoryDataloaderInterface {
         return this._initialSceneId;
     }
 
-    async load(storyId: StoryEnum = StoryEnum.episode1, sceneId: string = this.initialSceneId): Promise<StoryFullInterface> {
+    get initialStoryId(): StoryEnum {
+        return StoryEnum.episode1;
+    }
+
+    async load(storyId: StoryEnum = this.initialStoryId, sceneId: string = this.initialSceneId): Promise<StoryFullInterface> {
         const filePath = `${this.dataPath}/${storyId}/${sceneId}.json`;
         const scene = await loadJsonFile(filePath);
         return {

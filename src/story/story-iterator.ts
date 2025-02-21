@@ -1,14 +1,13 @@
 import { StoryInterface } from "@/story/interfaces/story.interface"
-import { StoryIteratorInterface } from "./story-iterator.interface"
+import { StoryIteratorInterface } from "@/story/interfaces/story-iterator.interface"
 import { Singleton } from "@/generic/decorators/singleton.decorator"
 import { ConditionsType, ConditionType } from "@/story/interfaces/choices.interface"
-import { StoryItemInterface } from "./interface/story-item.interface"
+import { StoryItemInterface } from "@/story/interfaces/story-item.interface"
 import { SceneInterface } from "@/story/interfaces/scene.interface"
 import { DialogInterface } from "@/story/interfaces/dialog.interface"
 import { LoggerConsole } from "@/generic/logging/logger.service"
-import { StoryIteratorProgressInterface } from "./interface/story-iterator-progress.interface"
+import { StoryIteratorProgressInterface } from "./interfaces/story-iterator-progress.interface"
 import { ValidationError } from "@/generic/errors/validation.error"
-import { CONDITIONS_INITIAL } from "@/story-user/const/conditions_initial.const"
 
 @Singleton
 export class StoryIterator implements StoryIteratorInterface {
@@ -18,13 +17,6 @@ export class StoryIterator implements StoryIteratorInterface {
     private dialogId: string | null = null
     private conditionMap!: ConditionsType
     private isEnd: boolean = false
-
-    constructor(story?: StoryInterface, sceneId: string | null = null, dialogId: string | null = null, conditions: ConditionsType = CONDITIONS_INITIAL()) {
-        this.reset()
-        if(story) {
-            this.set(story, sceneId, dialogId, conditions)
-        }
-    }
 
     getProgress(): StoryIteratorProgressInterface {
         return {

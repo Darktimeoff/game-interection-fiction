@@ -8,12 +8,20 @@ export class StoryService {
         private readonly dataLoader: StoryDataloaderInterface
     ) {}
 
+    getInitialSceneId(): string {
+        return this.dataLoader.initialSceneId
+    }
+
+    getInitialStoryId(): StoryEnum {
+        return this.dataLoader.initialStoryId
+    }
+
     @Log(
         (storyId, episodeId) => `Load story ${storyId} ${episodeId}`,
         (_, storyId, episodeId) => `Loaded story ${storyId} ${episodeId}`,
         (error, storyId, episodeId) => `Error in load: ${error} story: ${storyId} ${episodeId}`
     )
-    async load(storyId: StoryEnum, episodeId: string): Promise<StoryFullInterface> {
+    async load(storyId?: StoryEnum, episodeId?: string): Promise<StoryFullInterface> {
         return await this.dataLoader.load(storyId, episodeId)
     }
 

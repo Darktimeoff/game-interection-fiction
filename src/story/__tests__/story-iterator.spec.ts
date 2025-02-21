@@ -1,6 +1,7 @@
 import { ConditionType } from "@/story/interfaces/choices.interface";
-import { StoryIterator } from "../story-iterator";
+import { StoryIterator } from "@/story/story-iterator";
 import { StoryInterface } from "@/story/interfaces/story.interface";
+import { CONDITIONS_INITIAL } from '@/story/const/conditions_initial.const'
 
 describe('StoryIterator', () => {
     let storyIterator: StoryIterator;
@@ -57,7 +58,7 @@ describe('StoryIterator', () => {
     });
 
     it('should initialize with a story', () => {
-        storyIterator.set(mockStory);
+        storyIterator.set(mockStory, null, null, CONDITIONS_INITIAL());
         const firstItem = storyIterator.next();
         
         expect(firstItem).toEqual({
@@ -69,7 +70,7 @@ describe('StoryIterator', () => {
     });
 
     it('should return scene description after story description', () => {
-        storyIterator.set(mockStory);
+        storyIterator.set(mockStory, null, null, CONDITIONS_INITIAL());
         storyIterator.next(); // Skip story description
         const sceneItem = storyIterator.next();
 
@@ -81,7 +82,7 @@ describe('StoryIterator', () => {
     });
 
     it('should return dialog after scene description', () => {
-        storyIterator.set(mockStory);
+        storyIterator.set(mockStory, null, null, CONDITIONS_INITIAL());
         storyIterator.next(); // Skip story description
         storyIterator.next(); // Skip scene description
         const dialogItem = storyIterator.next();
@@ -101,7 +102,7 @@ describe('StoryIterator', () => {
     });
 
     it('should handle conditional dialogs', () => {
-        storyIterator.set(mockStory);
+        storyIterator.set(mockStory, null, null, CONDITIONS_INITIAL());
         storyIterator.next(); // Skip story description
         storyIterator.next(); // Skip scene description
         storyIterator.next();
@@ -120,7 +121,7 @@ describe('StoryIterator', () => {
     });
 
     it('should handle condition changes through choices', () => {
-        storyIterator.set(mockStory);
+        storyIterator.set(mockStory, null, null, CONDITIONS_INITIAL());
         
         // Пропускаем до диалога в первой сцене
         storyIterator.next();
@@ -175,7 +176,7 @@ describe('StoryIterator', () => {
             ]
         };
 
-        storyIterator.set(storyWithMultipleDialogs);
+        storyIterator.set(storyWithMultipleDialogs, null, null, CONDITIONS_INITIAL());
         storyIterator.setCondition(ConditionType.daniel_alive, false);
 
         storyIterator.next(); // Skip story description
@@ -191,7 +192,7 @@ describe('StoryIterator', () => {
     });
 
     it('should return null when story ends', () => {
-        storyIterator.set(mockStory);
+        storyIterator.set(mockStory, null, null, CONDITIONS_INITIAL());
         
         // Проходим через всю историю
         while(true) {

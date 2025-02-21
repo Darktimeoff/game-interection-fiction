@@ -48,8 +48,8 @@ describe('StoryUserService', () => {
         const storyUser = await storyUserService.findByUserId(user.id);
         expect(storyUser).toBeDefined();
         expect(storyUser.userId).toBe(user.id);
-        expect(storyUser.storyId).toBe(StoryEnum.episode1);
-        expect(storyUser.episodeId).toBe('01');
-        expect(storyUser.sceneId).toBeNull();
+        expect(storyUser.storyState.storyId).toBe(StoryEnum.episode1);
+        expect(storyUser.storyState.episodeId).toBe('01');
+        expect(storyUser.storyState.sceneId).toBeNull();
     });
 });

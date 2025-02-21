@@ -1,5 +1,5 @@
 import { ChoiceInterface } from "@/story/interfaces/choices.interface"
-import { StoryItemInterface } from "./interface/story-item.interface"
+import { StoryItemInterface } from "../../story/interfaces/story-item.interface"
 import { StoryRenderInterface } from "./story-render.interface"
 import { ReadlineServiceInterface } from "@/generic/readline/readline-service.interface"
 

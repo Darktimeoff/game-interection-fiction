@@ -1,14 +1,14 @@
 import { CommandHandlerInterface } from "@/generic/cqrs/command/interface/command-handler.interface";
-import { UpdateStoryUserCommand } from "@/story-user/command/update-story-user.command";
 import { StoryUserService } from "@/story-user/story-user.service";
+import { UpdateStoryStateCommand } from "@/story-user/command/update-story-state.command";
 
-export class UpdateStoryUserCommandHandler implements CommandHandlerInterface<UpdateStoryUserCommand> {
+export class UpdateStoryStateCommandHandler implements CommandHandlerInterface<UpdateStoryStateCommand> {
     constructor(
         private readonly storyUserService: StoryUserService
     ) {}
 
     
-    async execute({storyUser}: UpdateStoryUserCommand): Promise<void> {
-        await this.storyUserService.updateStoryUser(storyUser)
+    async execute({userId, storyState}: UpdateStoryStateCommand): Promise<void> {
+        await this.storyUserService.updateStoryState(userId, storyState)
     }
 }

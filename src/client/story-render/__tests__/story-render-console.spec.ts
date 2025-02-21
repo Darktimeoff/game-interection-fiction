@@ -1,5 +1,5 @@
-import { StoryRenderConsole } from "../story-render-console"
-import { StoryItemInterface } from "../interface/story-item.interface"
+import { StoryRenderConsole } from "@/client/story-render/story-render-console"
+import { StoryItemInterface } from "@/story/interfaces/story-item.interface"
 import { ReadlineServiceInterface } from "@/generic/readline/readline-service.interface"
 
 

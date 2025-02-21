@@ -9,10 +9,12 @@ import { CreateUserCommand } from "@/client/state/command/create-user.command";
 import { SelectUserCommand } from "@/client/state/command/select-user.command";
 import { DeleteUserCommand } from "@/client/state/command/delete-user.command";
 import { QueryBusInterface } from "@/generic/cqrs/query/interface/query-bus.interface";
-import { GetAllUserQuery } from "../state/query/get-all-user.query";
+import { GetAllUserQuery } from "@/client/state/query/get-all-user.query";
+import { sleep } from "@/generic/utils/sleep.utils";
 
 @LogClass()
 export class MenuService {
+    private readonly SHOW_MESSAGE_DELAY = 1000
     constructor(
         private readonly queryBus: QueryBusInterface,
         private readonly commandBus: CommandBusInterface,
@@ -46,7 +48,7 @@ export class MenuService {
             return menuItem.id
         } catch (error) {
             if(error instanceof ValidationError) {
-                console.log(error.message)
+                await this.showMessage(error.message)
                 await this.getMenu()
             }
 
@@ -59,10 +61,10 @@ export class MenuService {
             console.clear()
             const {title} = await this.getMenuUsers()
             await this.commandBus.execute(new SelectUserCommand(title))
-            console.log(`Выбран пользователь: ${title}`)
+            await this.showMessage(`Выбран пользователь: ${title}`)
         } catch (error) {
             if(error instanceof ValidationError) {
-                console.log(error.message)
+                await this.showMessage(error.message)
                 await this.getMenuSelectUser()
             }
         }
@@ -71,7 +73,9 @@ export class MenuService {
     private async getMenuUsers(): Promise<MenuItemInterface> {
         const users = await this.queryBus.execute(new GetAllUserQuery())
         if(users.length === 0) {
-            throw new ValidationError('Нет пользователей')
+            await this.showMessage('Нет пользователей')
+            await sleep(2000)
+            await this.getMenu()
         }
 
         const menuItems = users.map((user, index) => ({
@@ -92,10 +96,10 @@ export class MenuService {
             console.clear()
             const {title} = await this.getMenuUsers()
             await this.commandBus.execute(new DeleteUserCommand(title))
-            console.log(`Персонаж ${title} успешно удален`)
+            await this.showMessage(`Персонаж ${title} успешно удален`)
         } catch (error) {
             if(error instanceof ValidationError) {
-                console.log(error.message)
+                await this.showMessage(error.message)
                 await this.getMenu()
             }
         }
@@ -108,10 +112,10 @@ export class MenuService {
 
             await this.commandBus.execute(new CreateUserCommand(userName))
 
-            console.log(`Персонаж ${userName} успешно создан`)
+            await this.showMessage(`Персонаж ${userName} успешно создан`)
         } catch (error) {
             if(error instanceof ValidationError) {
-                console.log(error.message)
+                await this.showMessage(error.message)
                 await this.getMenuCreateUser()
             }
 
@@ -168,5 +172,10 @@ export class MenuService {
         if(!items.find(item => item.id === Number(input))) {
             throw new ValidationError('Invalid menu item selected')
         }
+    }
+
+    private async showMessage(message: string): Promise<void> {
+        console.log(message)
+        await sleep(this.SHOW_MESSAGE_DELAY)
     }
 }   

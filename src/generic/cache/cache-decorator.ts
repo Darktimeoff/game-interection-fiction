@@ -1,6 +1,7 @@
 import { ServiceEnum } from "@/generic/service-locator/service.enum";
 import { CacheInterface } from "./cache.interface";
 import { serviceLocator } from "@/client/app/app.container";
+import { CacheInMemory } from "./cache-inmemory";
 
 export function Cache(
     keyFactory: string | ((...args: any[]) => string)
@@ -11,10 +12,7 @@ export function Cache(
         descriptor: PropertyDescriptor
     ) {
         const originalMethod = descriptor.value;
-        const cacheService = serviceLocator.get<CacheInterface>(ServiceEnum.Cache)
-        if (!cacheService) {
-            throw new Error('Cache service not found')
-        }
+        const cacheService = serviceLocator?.get<CacheInterface>(ServiceEnum.Cache) ?? new CacheInMemory()
 
         descriptor.value = async function (...args: any[]) {
             const cacheKey = typeof keyFactory === 'string' 

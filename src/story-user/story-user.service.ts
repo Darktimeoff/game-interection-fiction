@@ -1,10 +1,9 @@
 import { Log } from "@/generic/logging/log.decorator";
 import { StoryUserEntityInterface } from "./entity/story-user-entity.interface";
-import { StoryUserFullEntityInterface } from "./entity/story-user-full-entity.interface";
 import { StoryUserRepository } from "./story-user.repository";
-import { StoryEnum } from "@/story/enum/story.enum";
 import { StoryService } from "@/story/story.service";
-import { CONDITIONS_INITIAL } from "./const/conditions_initial.const";
+import { StoryStateInterface } from "@/story/interfaces/story-state.interface";
+import { CONDITIONS_INITIAL } from "@/story/const/conditions_initial.const";
 
 export class StoryUserService {
     constructor(
@@ -17,18 +16,13 @@ export class StoryUserService {
         (storyUser, userId) => `Founded story user ${userId}: ${storyUser.id}`,
         (error, userId) => `Error finding story user ${userId}: ${error}`,
     )
-    async findByUserId(userId: StoryUserEntityInterface['userId']): Promise<StoryUserFullEntityInterface> {
+    async findByUserId(userId: StoryUserEntityInterface['userId']): Promise<StoryUserEntityInterface> {
         const storyUser = await this.repository.findByUserId(userId);
         if (!storyUser) {
             return await this.create(userId);
         }
 
-        const story = await this.stories.load(storyUser.storyId, storyUser.episodeId);
-
-        return {
-            ...storyUser,
-            story,
-        };
+        return storyUser
     }
 
     @Log(
@@ -45,21 +39,28 @@ export class StoryUserService {
         return storyUserEntity
     }
 
-    private async create(userId: StoryUserEntityInterface['userId']): Promise<StoryUserFullEntityInterface> {
-        const story = await this.stories.load(StoryEnum.episode1, '01');
+    async updateStoryState(userId: StoryUserEntityInterface['userId'], storyState: StoryStateInterface): Promise<StoryUserEntityInterface> {
+        const storyUser = await this.findByUserId(userId)
+        return await this.updateStoryUser({
+            ...storyUser,
+            storyState
+        })
+    }
 
+    private async create(userId: StoryUserEntityInterface['userId']): Promise<StoryUserEntityInterface> {
         const storyUser = await this.repository.create({
             userId,
-            storyId: story.storyId,
-            episodeId: story.id,
-            sceneId: null,
-            dialogId: null,
-            conditions: CONDITIONS_INITIAL()
+            storyState: {
+                storyId: this.stories.getInitialStoryId(),
+                episodeId: this.stories.getInitialSceneId(),
+                sceneId: null,
+                dialogId: null,
+                conditions: CONDITIONS_INITIAL()
+            }
         });
 
         return {
             ...storyUser,
-            story,
         };
     }
 }

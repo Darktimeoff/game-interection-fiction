@@ -7,9 +7,13 @@ import { GetCurrentUserQuery } from "@/client/state/query/get-current-user.query
 import { GetStoryUserByUserIdQuery } from "@/story-user/query/get-story-user-by-user-id.query";
 import { GetStoryUserByUserIdQueryHandler } from "@/story-user/query-handler/get-story-user-by-user-id.command-handler";
 import storyUserService from "@/story-user/story-user.container";
+import { GetStoryItemByUserIdQuery } from "@/story-user/query/get-story-item-by-user-id.query";
+import { GetStoryItemByUserIdQueryHandler } from "@/story-user/query-handler/get-story-item-by-user-id.command-handler";
+import { storyHandleService } from "@/story/story.container";
 
 export const queryBus = new QueryBus()
 
 queryBus.register(GetAllUserQuery, new GetAllUserQueryHandler(stateUserService))
 queryBus.register(GetCurrentUserQuery, new GetCurrentUserQueryHandler(stateUserService))   
 queryBus.register(GetStoryUserByUserIdQuery, new GetStoryUserByUserIdQueryHandler(storyUserService))
+queryBus.register(GetStoryItemByUserIdQuery, new GetStoryItemByUserIdQueryHandler(storyHandleService, storyUserService))

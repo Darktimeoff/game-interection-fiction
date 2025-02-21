@@ -1,14 +1,11 @@
-import { LoggerInterface } from "@/generic/logging/logger.service";  
+import { LoggerConsole, LoggerInterface } from "@/generic/logging/logger.service";  
 import { DecoratedMethodResultType } from "@/generic/decorators/type/decorated-method-result.type";
 import { MethodDecoratorType } from "@/generic/decorators/type/method-decorator.type";
 import { serviceLocator } from "@/client/app/app.container";
-import { ServiceEnum } from "../service-locator/service.enum";
+import { ServiceEnum } from "@/generic/service-locator/service.enum";
 
 export function LogClass()  {
-    const logger = serviceLocator.get<LoggerInterface>(ServiceEnum.Logger)
-    if (!logger) {
-        throw new Error('Logger not found')
-    }
+    const logger = serviceLocator?.get<LoggerInterface>(ServiceEnum.Logger) ?? new LoggerConsole()
 
     return <T extends { new (...args: any[]): {} }>(constructor: T) => {
         try {
@@ -69,10 +66,7 @@ export const Log =
             type R = DecoratedMethodResultType<TResult>;
 
 
-            const logger = serviceLocator.get<LoggerInterface>(ServiceEnum.Logger)
-            if (!logger) {
-                throw new Error('Logger not found')
-            }
+            const logger = serviceLocator?.get<LoggerInterface>(ServiceEnum.Logger) ?? new LoggerConsole()
 
             logger.setContext(`${target.constructor.name}::${String(propertyKey)} `);
 
