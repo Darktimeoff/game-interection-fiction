@@ -2,6 +2,7 @@ import { StoryFileDataloader } from "@/story/story-file.dataloader";
 import { StoryFileAccess } from "../story-file.access";
 import { join } from "node:path";
 import { StoryEnum } from "../enum/story.enum";
+import { StoryCachedDataLoader } from "../story-cached.dataloader";
 
 const path = join(__dirname, '..', '..', 'data', 'stories');
 
@@ -37,5 +38,18 @@ describe('StoryFileDataloader', () => {
         const storyFileDataloader = new StoryFileAccess(new StoryFileDataloader());
         await expect(storyFileDataloader.load(StoryEnum.episode1, 'scene3')).rejects.toThrow(`Scene id scene3 not found in story ${StoryEnum.episode1}`);
         expect(storyFileDataloader.path).toEqual(path);
+    });
+
+   
+    it('should cache the story', async () => {
+        const storyFileDataloader = new StoryCachedDataLoader(new StoryFileDataloader());
+        const story = await storyFileDataloader.load();
+        expect(story.id).toBeTruthy()
+        expect(story).toBeTruthy()
+        expect(storyFileDataloader.path).toEqual(path);
+        expect(storyFileDataloader.initialSceneId).toEqual('01');
+        expect(storyFileDataloader.initialStoryId).toEqual(StoryEnum.episode1);
+        expect(storyFileDataloader.getStoryIds()).resolves.toEqual([StoryEnum.episode1, StoryEnum.episode2]);
+        expect(storyFileDataloader.getSceneIds(StoryEnum.episode1)).resolves.toEqual(['01', '02', '03', '04', '05', '06', '07']);
     });
 });

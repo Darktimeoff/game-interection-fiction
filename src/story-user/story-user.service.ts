@@ -39,6 +39,11 @@ export class StoryUserService {
         return storyUserEntity
     }
 
+    @Log(
+        (userId, storyState) => `Updating story state for userId ${userId} with storyState ${JSON.stringify(storyState)}`,
+        (newStoryUser, userId, storyState) => `Updated story state for userId ${userId} with storyState ${JSON.stringify(storyState)}: ${JSON.stringify(newStoryUser)}`,
+        (err, userId, storyState) => `Error updating story state for userId ${userId} with storyState ${JSON.stringify(storyState)}: ${err}`
+    )
     async updateStoryState(userId: StoryUserEntityInterface['userId'], storyState: StoryStateInterface): Promise<StoryUserEntityInterface> {
         const storyUser = await this.findByUserId(userId)
         return await this.updateStoryUser({
