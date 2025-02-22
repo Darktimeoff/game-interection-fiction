@@ -5,7 +5,9 @@ import { QueryBusInterface } from "@/generic/cqrs/query/interface/query-bus.inte
 import { Log, LogClass } from "@/generic/logging/log.decorator";
 import { SelectStoryChoiceCommandByUserId } from "@/story-user/command/select-story-choice-by-user-id.command";
 import { UpdateStoryStateCommand } from "@/story-user/command/update-story-state.command";
+import { GetIsStoryEndedByUserIdQuery } from "@/story-user/query/get-is-story-ended-by-user-id.query";
 import { GetStoryItemByUserIdQuery } from "@/story-user/query/get-story-item-by-user-id.query";
+import { EndGameError } from "@/client/game/error/end-game.error";
 
 @LogClass()
 export class GameStoryService {
@@ -22,7 +24,13 @@ export class GameStoryService {
             throw new Error('Current user not selected')
         }
         while(true) {
-            await this.renderScene(user.id)
+            try {
+                await this.renderScene(user.id)
+            } catch(error) {
+                if(error instanceof EndGameError) {
+                    break
+                }
+            }
         }
     }
 
@@ -44,6 +52,11 @@ export class GameStoryService {
             await this.commandBus.execute(new SelectStoryChoiceCommandByUserId(userId, choice))
         } catch(error) {
             await this.renderScene(userId)
+        }
+
+        const isEnded = await this.queryBus.execute(new GetIsStoryEndedByUserIdQuery(userId))
+        if(isEnded) {
+            throw new EndGameError()
         }
     }
 }

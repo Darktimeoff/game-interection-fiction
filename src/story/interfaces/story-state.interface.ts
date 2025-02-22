@@ -7,4 +7,5 @@ export interface StoryStateInterface {
     sceneId: string | null
     dialogId: string | null
     conditions: ConditionsType
+    isEnded: boolean
 }

@@ -60,6 +60,7 @@ export class StoryUserService {
                 episodeId: this.stories.getInitialSceneId(),
                 sceneId: null,
                 dialogId: null,
+                isEnded: false,
                 conditions: CONDITIONS_INITIAL()
             }
         });

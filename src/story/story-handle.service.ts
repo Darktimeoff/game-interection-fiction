@@ -36,7 +36,14 @@ export class StoryHandleService {
             }
         }
       
-        return this.getState(storyState)
+        return {
+            ...this.getState(storyState),
+            isEnded: this.isEnded(nextScene)
+        }
+    }
+
+    private isEnded(nextScene: string): boolean {
+        return nextScene === 'end'
     }
 
     private async restore(storyState: StoryStateInterface): Promise<void> {
