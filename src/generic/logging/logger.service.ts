@@ -7,53 +7,62 @@ export interface LoggerInterface {
     setContext(context: string): void;
 }
 
-export abstract class AbstractLogger implements LoggerInterface {
+export abstract class AbstractLoggerTemplate implements LoggerInterface {
     private context: string = '';
 
-    abstract log(message: string): void;
-    abstract error(message: string): void;
-    abstract warn(message: string): void;
+    constructor(context: string = '', private readonly envService: EnvService = new EnvService()) {
+        this.setContext(context);
+    }
+
+    log(message: string) {
+        if(!this.envService.get('LOGGING')) {
+            return
+        }
+
+        this.handlerLog(this.formatMessage(message));
+    };
+    error(message: string) {
+        if(!this.envService.get('LOGGING')) {
+            return
+        }
+
+        this.handlerError(this.formatMessage(message));
+    };
+    warn(message: string) {
+        if(!this.envService.get('LOGGING')) {
+            return
+        }
+
+        this.handlerWarn(this.formatMessage(message));
+    };
 
     setContext(context: string): void {
         this.context = context;
     }
 
-    protected formatMessage(message: string): string {
+    private formatMessage(message: string): string {
         return `\n${this.getDate()} ${this.context}${message}`;
     }
 
     private getDate(): string {
         return `[${new Date().toISOString()}]`;
     }
+
+    protected abstract handlerLog(message: string): void;
+    protected abstract handlerError(message: string): void;
+    protected abstract handlerWarn(message: string): void;
 }
 
-export class LoggerConsole extends AbstractLogger {
-    constructor(context: string = '', private readonly envService: EnvService = new EnvService()) {
-        super();
-        this.setContext(context);
+export class LoggerConsole extends AbstractLoggerTemplate {
+    handlerLog(message: string): void {
+        console.log(message);
     }
 
-    log(message: string): void {
-        if(!this.envService.get('LOGGING')) {
-            return
-        }
-
-        console.log(this.formatMessage(message));
+    handlerError(message: string): void {
+        console.error(message);
     }
 
-    error(message: string): void {
-        if(!this.envService.get('LOGGING')) {
-            return
-        }
-
-        console.error(this.formatMessage(message));
-    }
-
-    warn(message: string): void {
-        if(!this.envService.get('LOGGING')) {
-            return
-        }
-
-        console.warn(this.formatMessage(message));
+    handlerWarn(message: string): void {
+        console.warn(message);
     }
 }
