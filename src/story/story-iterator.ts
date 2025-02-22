@@ -34,17 +34,6 @@ export class StoryIterator implements StoryIteratorInterface {
         this.conditionMap[condition] = value
     }
 
-    reset(): void {
-        this.story = null
-        this.sceneId = null
-        this.dialogId = null
-        this.conditionMap = Object.values(ConditionType).reduce((acc, type) => {
-            acc[type] = true
-            return acc
-        }, {} as ConditionsType)
-        this.isEnd = false
-    }
-
     set(item: StoryInterface, sceneId: string | null = null, dialogId: string | null = null, conditions?: ConditionsType): void {
         this.story = item
         this.sceneId = sceneId
