@@ -61,12 +61,10 @@ describe('StoryIterator', () => {
         storyIterator.set(mockStory, null, null, CONDITIONS_INITIAL());
         const firstItem = storyIterator.next();
         
-        expect(firstItem).toEqual({
-            id: "test_story",
-            text: "Test story description",
-            title: "Test Story",
-            choices: []
-        });
+        expect(firstItem?.id).toBe("test_story")
+        expect(firstItem?.text).toBe("Test story description")
+        expect(firstItem?.title).toBe("Test Story")
+        expect(firstItem?.choices).toEqual([])
     });
 
     it('should return scene description after story description', () => {
@@ -74,11 +72,10 @@ describe('StoryIterator', () => {
         storyIterator.next(); // Skip story description
         const sceneItem = storyIterator.next();
 
-        expect(sceneItem).toEqual({
-            id: "scene1",
-            text: "First scene description",
-            choices: []
-        });
+        expect(sceneItem?.id).toBe("scene1")
+        expect(sceneItem?.title).toBe("")
+        expect(sceneItem?.text).toBe("First scene description")
+        expect(sceneItem?.choices).toEqual([])
     });
 
     it('should return dialog after scene description', () => {
@@ -87,18 +84,16 @@ describe('StoryIterator', () => {
         storyIterator.next(); // Skip scene description
         const dialogItem = storyIterator.next();
 
-        expect(dialogItem).toEqual({
-            id: "scene1",
-            title: "Character1",
-            text: "First dialog",
-            choices: [
+        expect(dialogItem?.id).toBe("0")
+        expect(dialogItem?.title).toBe("Character1")
+        expect(dialogItem?.text).toBe("First dialog")
+        expect(dialogItem?.choices).toEqual([
                 {
                     text: "Go to scene 2",
                     nextScene: "scene2",
-                    setCondition: { [ConditionType.daniel_alive]: true, [ConditionType.has_map]: true }
-                }
-            ]
-        });
+                setCondition: { [ConditionType.daniel_alive]: true, [ConditionType.has_map]: true }
+            }
+        ])
     });
 
     it('should handle conditional dialogs', () => {

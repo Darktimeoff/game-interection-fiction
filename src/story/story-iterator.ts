@@ -8,6 +8,7 @@ import { DialogInterface } from "@/story/interfaces/dialog.interface"
 import { LoggerConsole } from "@/generic/logging/logger.service"
 import { StoryIteratorProgressInterface } from "./interfaces/story-iterator-progress.interface"
 import { ValidationError } from "@/generic/errors/validation.error"
+import { DialogAdapter, SceneAdapter, StoryAdapter } from "./story-item-adapter"
 
 @Singleton
 export class StoryIterator implements StoryIteratorInterface {
@@ -129,7 +130,7 @@ export class StoryIterator implements StoryIteratorInterface {
         const findIndex = dialogs.findIndex(dialog => dialog.id === this.dialogId)
         const dialog = dialogs[findIndex]
         if(dialog) {
-            const item = this.formatDialog(scene, dialog)
+            const item = this.formatDialog(dialog)
             this.dialogId = dialogs.length > findIndex + 1 ? dialogs[findIndex + 1].id : dialogs[findIndex].id
             this.logger.log(`next::sceneId: ${this.sceneId} dialogId: ${this.dialogId} condition: ${JSON.stringify(this.conditionMap)}`)
             return item
@@ -155,28 +156,14 @@ export class StoryIterator implements StoryIteratorInterface {
     }
 
     private formatRootScene(scene: StoryInterface): StoryItemInterface {
-        return {
-            id: scene.id,
-            text: scene.description,
-            title: scene.title,
-            choices: []
-        }
+        return new StoryAdapter(scene)
     } 
 
     private formatScene(scene: SceneInterface): StoryItemInterface {
-        return {
-            id: scene.id,
-            text: scene.description,
-            choices: []
-        }
+        return new SceneAdapter(scene)
     }
 
-    private formatDialog(scene: SceneInterface, dialog: DialogInterface): StoryItemInterface {
-        return {
-            id: scene.id,
-            title: dialog.character,
-            text: dialog.text,
-            choices: dialog.choices || []
-        }
+    private formatDialog(dialog: DialogInterface): StoryItemInterface {
+        return new DialogAdapter(dialog)
     }
 }
